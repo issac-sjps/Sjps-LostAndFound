@@ -51,11 +51,13 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .card-img{width:100%;aspect-ratio:1/1;overflow:hidden;background:linear-gradient(135deg,#FFF0E8,#FFDFC8);display:flex;align-items:center;justify-content:center;font-size:60px;}
 .card-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
 .card:hover .card-img img{transform:scale(1.06);}
-.card-body{padding:14px 16px 16px;}
-.card-cat{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 10px;border-radius:100px;margin-bottom:6px;}
-.card-name{font-size:1rem;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.card-meta{font-size:.78rem;color:var(--muted);}
-.card-status{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;color:var(--green);margin-top:6px;}
+.card-body{padding:12px 14px 14px;}
+.card-cat{display:inline-block;font-size:.70rem;font-weight:700;padding:2px 9px;border-radius:100px;}
+.card-name-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:5px;}
+.card-name{font-size:.95rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.card-meta-row{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.card-meta{font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-status{display:inline-flex;align-items:center;gap:3px;font-size:.70rem;font-weight:700;color:var(--green);white-space:nowrap;flex-shrink:0;}
 .empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
 .empty-icon{font-size:64px;margin-bottom:12px;}
 .cat-文具{background:#FFF3CD;color:#B8860B;}.cat-衣物{background:#D1ECF1;color:#0C6C78;}
@@ -249,6 +251,26 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .num-badge{display:inline-block;background:#F0EAE2;color:#888;border-radius:6px;padding:1px 7px;font-size:.68rem;font-weight:700;letter-spacing:.5px;margin-bottom:4px;}
 .add-limit-bar{background:#FFF3CD;border:2px solid var(--accent);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:none;font-size:.88rem;color:#856404;font-weight:700;}
 
+
+/* EXPORT MODAL */
+.export-overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.6);z-index:2000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;}
+.export-overlay.open{display:flex;animation:fadeIn .2s ease;}
+.export-modal{background:#fff;border-radius:22px;max-width:480px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.25);animation:popUp .25s cubic-bezier(.34,1.56,.64,1);}
+.export-head{background:linear-gradient(135deg,#2D2D2D,#444);padding:18px 22px;border-radius:22px 22px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.export-head h3{color:#fff;font-size:1.05rem;font-weight:900;display:flex;align-items:center;gap:8px;}
+.export-head-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+.export-body{padding:24px 26px 26px;}
+.export-section{margin-bottom:20px;}
+.export-section label{display:block;font-size:.8rem;font-weight:800;color:var(--muted);margin-bottom:8px;letter-spacing:.5px;}
+.export-row{display:flex;gap:12px;align-items:center;}
+.export-row select{flex:1;padding:10px 13px;border:2px solid var(--border);border-radius:11px;font-size:.9rem;font-family:'Noto Sans TC',sans-serif;outline:none;background:#FAFAF8;}
+.export-row select:focus{border-color:var(--primary);}
+.export-row span{color:var(--muted);font-size:.9rem;font-weight:700;}
+.export-preview{background:#F5F5F0;border-radius:12px;padding:14px 16px;font-size:.82rem;color:var(--muted);line-height:1.8;}
+.export-preview strong{color:var(--text);}
+.export-check-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.88rem;}
+.export-check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
+
 </style>
 </head>
 <body>
@@ -267,6 +289,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
   <span class="admin-bar-sep">|</span>
   <button class="admin-bar-btn add" onclick="openQuickAdd()">➕ 新增失物</button>
   <button class="admin-bar-btn" onclick="showView('admin')">🗂️ 管理後台</button>
+  <button class="admin-bar-btn" onclick="openExportModal()" style="background:rgba(78,205,196,.25);border-color:rgba(78,205,196,.5);">📊 匯出報表</button>
   <button class="admin-bar-btn" onclick="doLogout()">登出</button>
 </div>
 
@@ -557,6 +580,55 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">
         <button class="btn btn-gray" onclick="closeEditModal()">取消</button>
         <button class="btn btn-orange" onclick="saveEdit()" id="saveEditBtn">💾 儲存修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="export-overlay" id="exportOverlay" onclick="if(event.target===this)closeExportModal()">
+  <div class="export-modal">
+    <div class="export-head">
+      <h3>📊 匯出失物招領報表</h3>
+      <button class="export-head-close" onclick="closeExportModal()">✕</button>
+    </div>
+    <div class="export-body">
+
+      <!-- 月份範圍 -->
+      <div class="export-section">
+        <label>📅 選擇月份範圍</label>
+        <div class="export-row">
+          <select id="expFrom"></select>
+          <span>至</span>
+          <select id="expTo"></select>
+        </div>
+      </div>
+
+      <!-- 狀態篩選 -->
+      <div class="export-section">
+        <label>🏷️ 包含狀態</label>
+        <div class="export-check-row"><input type="checkbox" id="expAvail" checked/><label for="expAvail">✅ 待認領</label></div>
+        <div class="export-check-row"><input type="checkbox" id="expClaimed" checked/><label for="expClaimed">📤 已認領</label></div>
+      </div>
+
+      <!-- 包含欄位 -->
+      <div class="export-section">
+        <label>📋 報表欄位</label>
+        <div style="background:#F5F5F0;border-radius:12px;padding:12px 14px;font-size:.82rem;line-height:2;color:var(--text);">
+          編號 ／ 種類 ／ 物品名稱 ／ 拾獲日期 ／ 拾獲地點 ／ 物品描述<br>
+          <span style="color:var(--secondary);font-weight:700;">＋ 空白欄位：</span>簽領日期 ／ 班級座號 ／ 簽領姓名 ／ 備註
+        </div>
+      </div>
+
+      <!-- 預覽 -->
+      <div class="export-section" style="margin-bottom:0;">
+        <label>📌 預覽</label>
+        <div class="export-preview" id="expPreview">選擇範圍後顯示…</div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
+        <button class="btn btn-gray" onclick="closeExportModal()">取消</button>
+        <button class="btn btn-orange" onclick="doExport()" id="expBtn">📥 匯出 Excel</button>
       </div>
     </div>
   </div>
@@ -859,7 +931,7 @@ function renderPublic() {
     c.style.position='relative';
     const editBtn  = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
     const claimBar = loggedIn ? `<button class="card-claim-bar" onclick="event.stopPropagation();toggleClaimed('${item.id}','待認領')">✅ 標記已認領</button>` : '';
-    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>${claimBar}`;
+    c.innerHTML=`${editBtn}${img}<div class="card-body"><div class="card-name-row"><div class="card-name">${esc(item.name)}</div><span class="card-cat cat-${item.category}">${item.category}</span></div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta-row"><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div></div>${claimBar}`;
     c.onclick=()=>openModal(item); g.appendChild(c);
   });
 }
@@ -926,6 +998,192 @@ let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
 setToday();
+
+// ══════════════════════════════════════════════════════════════════
+// 📊 匯出報表（SheetJS 瀏覽器端產生 Excel）
+// ══════════════════════════════════════════════════════════════════
+
+// 動態載入 SheetJS
+function loadSheetJS() {
+  return new Promise(res => {
+    if (window.XLSX) { res(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload = res;
+    document.head.appendChild(s);
+  });
+}
+
+// 取得所有有資料的年月清單
+function getAvailableMonths() {
+  const set = new Set();
+  items.forEach(i => { if (i.foundDate) set.add(i.foundDate.slice(0,7)); });
+  return [...set].sort().reverse(); // 最新在前
+}
+
+function rocYearMonth(ym) {
+  // "2026-03" → "11503月"
+  const y = parseInt(ym.slice(0,4)) - 1911;
+  const m = parseInt(ym.slice(5,7));
+  return `${y}年${String(m).padStart(2,'0')}月`;
+}
+
+window.openExportModal = async () => {
+  await loadSheetJS();
+  const months = getAvailableMonths();
+  const fromSel = document.getElementById('expFrom');
+  const toSel   = document.getElementById('expTo');
+  fromSel.innerHTML = months.map(m => `<option value="${m}">${rocYearMonth(m)}（${m}）</option>`).join('');
+  toSel.innerHTML   = [...months].reverse().map(m => `<option value="${m}">${rocYearMonth(m)}（${m}）</option>`).join('');
+  // 預設最舊 → 最新
+  if (months.length) {
+    fromSel.value = months[months.length-1];
+    toSel.value   = months[0];
+  }
+  updateExpPreview();
+  fromSel.onchange = updateExpPreview;
+  toSel.onchange   = updateExpPreview;
+  document.getElementById('expAvail').onchange   = updateExpPreview;
+  document.getElementById('expClaimed').onchange = updateExpPreview;
+  document.getElementById('exportOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeExportModal = () => {
+  document.getElementById('exportOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+function getFilteredForExport() {
+  const from     = document.getElementById('expFrom').value;
+  const to       = document.getElementById('expTo').value;
+  const wantAvail   = document.getElementById('expAvail').checked;
+  const wantClaimed = document.getElementById('expClaimed').checked;
+  const [fromYM, toYM] = from <= to ? [from, to] : [to, from];
+
+  return items.filter(i => {
+    if (!i.foundDate) return false;
+    const ym = i.foundDate.slice(0,7);
+    if (ym < fromYM || ym > toYM) return false;
+    if (i.status === '待認領' && !wantAvail)   return false;
+    if (i.status === '已認領' && !wantClaimed) return false;
+    return true;
+  }).sort((a,b) => (a.foundDate||'').localeCompare(b.foundDate||''));
+}
+
+function updateExpPreview() {
+  const result = getFilteredForExport();
+  const avail   = result.filter(i=>i.status==='待認領').length;
+  const claimed = result.filter(i=>i.status==='已認領').length;
+  const from = document.getElementById('expFrom').value;
+  const to   = document.getElementById('expTo').value;
+  const [f,t] = from<=to ? [from,to] : [to,from];
+  document.getElementById('expPreview').innerHTML =
+    `<strong>範圍：</strong>${rocYearMonth(f)} ～ ${rocYearMonth(t)}<br>` +
+    `<strong>共 ${result.length} 件</strong>（待認領 ${avail} 件 ／ 已認領 ${claimed} 件）`;
+}
+
+window.doExport = async () => {
+  const data = getFilteredForExport();
+  if (!data.length) { toast('⚠️ 選定範圍內沒有資料','ng'); return; }
+
+  const btn = document.getElementById('expBtn');
+  btn.textContent = '產生中…'; btn.disabled = true;
+
+  try {
+    const XLSX = window.XLSX;
+    const wb = XLSX.utils.book_new();
+
+    // ── 報表標題資訊 ──
+    const from = document.getElementById('expFrom').value;
+    const to   = document.getElementById('expTo').value;
+    const [f,t] = from<=to ? [from,to] : [to,from];
+    const rangeLabel = `${rocYearMonth(f)} ～ ${rocYearMonth(t)}`;
+    const printDate  = (() => {
+      const n = new Date();
+      return `${n.getFullYear()-1911}年${n.getMonth()+1}月${n.getDate()}日`;
+    })();
+
+    // ── 工作表資料 ──
+    const wsData = [];
+
+    // 第1列：標題
+    wsData.push(['新莊國小 失物招領報表', '', '', '', '', '', '', '', '', '']);
+    // 第2列：期間 + 列印日期
+    wsData.push([`列印期間：${rangeLabel}`, '', '', '', `列印日期：${printDate}`, '', `共 ${data.length} 件`, '', '', '']);
+    // 第3列：空白
+    wsData.push([]);
+    // 第4列：欄位標題
+    wsData.push([
+      '編號', '種類', '物品名稱', '拾獲日期', '拾獲地點', '物品描述', '狀態',
+      '簽領日期', '班級座號', '簽領姓名', '備註'
+    ]);
+    // 資料列
+    data.forEach((item, idx) => {
+      wsData.push([
+        item.itemNumber || '—',
+        item.category   || '',
+        item.name       || '',
+        item.foundDate  || '',
+        item.foundLocation || '',
+        item.description   || '',
+        item.status        || '',
+        '', // 簽領日期（空白）
+        '', // 班級座號（空白）
+        '', // 簽領姓名（空白）
+        '', // 備註（空白）
+      ]);
+    });
+    // 空白間隔
+    wsData.push([]);
+    // 統計列
+    const avail   = data.filter(i=>i.status==='待認領').length;
+    const claimed = data.filter(i=>i.status==='已認領').length;
+    wsData.push([`合計：${data.length} 件`, `待認領：${avail} 件`, `已認領：${claimed} 件`, '', '', '', '', '', '', '', '']);
+
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // ── 欄寬 ──
+    ws['!cols'] = [
+      {wch:16}, // 編號
+      {wch:8},  // 種類
+      {wch:16}, // 物品名稱
+      {wch:12}, // 拾獲日期
+      {wch:16}, // 拾獲地點
+      {wch:20}, // 物品描述
+      {wch:8},  // 狀態
+      {wch:14}, // 簽領日期
+      {wch:14}, // 班級座號
+      {wch:12}, // 簽領姓名
+      {wch:14}, // 備註
+    ];
+
+    // ── 列高（標題列高一點）──
+    ws['!rows'] = [{hpt:24},{hpt:18},{hpt:8},{hpt:22}];
+
+    // ── 合併標題儲存格 ──
+    ws['!merges'] = [
+      {s:{r:0,c:0}, e:{r:0,c:10}}, // 大標題
+      {s:{r:1,c:0}, e:{r:1,c:3}},  // 期間
+      {s:{r:1,c:4}, e:{r:1,c:5}},  // 列印日期
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, '失物招領');
+
+    // ── 檔案名稱 ──
+    const fname = `失物招領報表_${f.replace('-','')}~${t.replace('-','')}.xlsx`;
+    XLSX.writeFile(wb, fname);
+
+    closeExportModal();
+    toast(`✅ 已匯出 ${fname}`,'ok');
+  } catch(e) {
+    console.error(e);
+    toast('❌ 匯出失敗：'+e.message,'ng');
+  } finally {
+    btn.textContent = '📥 匯出 Excel'; btn.disabled = false;
+  }
+};
+
 
 // ── 編號工具 ──────────────────────────────────────────────────────
 // 民國年格式：西元年 - 1911
