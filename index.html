@@ -9,11 +9,12 @@
 :root{
   --bg:#FFF8EF;--primary:#FF6B35;--primary-d:#E05520;--primary-light:#FF9A6C;
   --secondary:#4ECDC4;--accent:#FFD166;--green:#06D6A0;
-  --red:#FF4757;--card-bg:#fff;--text:#2D2D2D;--muted:#999;
+  --red:#FF4757;--text:#2D2D2D;--muted:#999;
   --border:#EDE5DC;--radius:18px;--shadow:0 4px 24px rgba(0,0,0,.10);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+/* NAV */
 .top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:200;}
 .top-nav-logo{font-weight:900;font-size:1rem;color:var(--primary);}
 .admin-link-btn{font-size:.78rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Noto Sans TC',sans-serif;padding:4px 10px;border-radius:8px;transition:.15s;}
@@ -22,7 +23,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .fb-status.ok{background:#D4EDDA;color:#155724;}
 .fb-status.wait{background:#FFF3CD;color:#856404;}
 .fb-status.err{background:#F8D7DA;color:#721C24;}
+/* VIEWS */
 .view{display:none;}.view.active{display:block;}
+/* HEADER */
 header{background:linear-gradient(135deg,var(--primary) 0%,#FF8E53 60%,var(--accent) 100%);position:relative;overflow:hidden;}
 header::before{content:'';position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.10);top:-100px;right:-60px;}
 header::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-60px;left:40px;}
@@ -32,6 +35,7 @@ header::after{content:'';position:absolute;width:180px;height:180px;border-radiu
 .header-text p{color:rgba(255,255,255,.90);font-size:.95rem;margin-top:4px;line-height:1.6;}
 .header-badge{display:inline-block;background:rgba(255,255,255,.25);color:#fff;border-radius:100px;padding:3px 14px;font-size:.8rem;font-weight:700;margin-top:8px;}
 .notice-bar{background:var(--secondary);color:#fff;text-align:center;padding:10px 16px;font-size:.92rem;font-weight:700;}
+/* GRID */
 main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .section-title{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
 .section-title h2{font-size:1.3rem;font-weight:900;}
@@ -60,6 +64,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .cat-餐具{background:#FFE8CC;color:#A0522D;}
 .skeleton{background:linear-gradient(90deg,#F0EAE2 25%,#FFE8D5 50%,#F0EAE2 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--radius);aspect-ratio:1/1;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+/* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.55);z-index:1000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
 .overlay.open{display:flex;animation:fadeIn .2s ease;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
@@ -79,7 +84,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .close-x{position:absolute;top:14px;right:14px;width:36px;height:36px;background:rgba(255,255,255,.9);border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);z-index:10;}
 .btn-primary{width:100%;background:var(--primary);color:#fff;border:none;border-radius:14px;padding:14px;font-size:1rem;font-weight:800;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
 .btn-primary:hover{background:var(--primary-d);}
-/* ── LOGIN ── */
+/* LOGIN */
 #loginView{min-height:calc(100vh - 52px);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFF8EF,#FFE8D5);}
 .login-card{background:#fff;border-radius:24px;padding:48px 40px;max-width:340px;width:100%;box-shadow:0 16px 60px rgba(0,0,0,.12);text-align:center;}
 .login-card h2{font-size:1.4rem;font-weight:900;margin:14px 0 6px;}
@@ -87,7 +92,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .login-input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:14px;font-size:1.3rem;font-family:'Noto Sans TC',sans-serif;outline:none;text-align:center;letter-spacing:6px;transition:.2s;margin-bottom:8px;}
 .login-input:focus{border-color:var(--primary);}
 .login-err{color:var(--red);font-size:.82rem;margin-bottom:10px;min-height:18px;}
-/* ── ADMIN ── */
+/* ADMIN */
 #adminView{max-width:960px;margin:0 auto;padding:32px 20px 80px;display:none;}
 .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
 .admin-header h2{font-size:1.4rem;font-weight:900;}
@@ -110,19 +115,23 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--primary);background:#fff;}
 .fg textarea{resize:vertical;min-height:72px;}
 .fg.full{grid-column:1/-1;}
-.upload-zone{border:3px dashed var(--border);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;transition:.2s;background:#FAFAF8;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;}
+/* UPLOAD ZONE */
+.upload-zone{border:3px dashed var(--border);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;transition:.2s;background:#FAFAF8;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:140px;}
 .upload-zone.drag{border-color:var(--primary);background:#FFF0E8;}
 .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-zone p{color:var(--muted);font-size:.85rem;line-height:1.6;}
+.upload-zone p{color:var(--muted);font-size:.85rem;line-height:1.7;}
 .upload-zone strong{color:var(--primary);}
 .prev-box{display:none;margin-top:12px;}
 .prev-box img{width:100%;max-height:190px;object-fit:cover;border-radius:11px;border:2px solid var(--border);}
-.prev-ok{font-size:.76rem;color:var(--green);font-weight:700;margin-top:5px;text-align:center;}
-.prev-rm{background:none;border:none;color:var(--red);font-size:.76rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;width:100%;text-align:center;margin-top:3px;}
-.prog{display:none;margin-top:10px;}
-.prog-bar{background:#F0EAE2;border-radius:100px;height:7px;overflow:hidden;}
-.prog-fill{height:100%;background:var(--primary);border-radius:100px;transition:width .3s;}
-.prog-lbl{font-size:.76rem;color:var(--muted);text-align:center;margin-top:4px;}
+.prev-meta{font-size:.76rem;margin-top:6px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;}
+.prev-meta .size-ok{color:var(--green);font-weight:700;}
+.prev-meta .size-warn{color:#856404;font-weight:700;}
+.prev-rm{background:none;border:none;color:var(--red);font-size:.76rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;margin-top:4px;display:block;width:100%;text-align:center;}
+/* COMPRESS PROGRESS */
+.compress-bar{display:none;margin-top:10px;background:#F0EAE2;border-radius:100px;height:6px;overflow:hidden;}
+.compress-fill{height:100%;background:var(--primary);border-radius:100px;transition:width .4s;}
+.compress-lbl{font-size:.75rem;color:var(--muted);text-align:center;margin-top:4px;}
+/* ADMIN TABLE */
 .admin-table{width:100%;border-collapse:collapse;}
 .admin-table th{text-align:left;padding:10px 12px;font-size:.76rem;font-weight:700;color:var(--muted);border-bottom:2px solid var(--border);}
 .admin-table td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:.86rem;vertical-align:middle;}
@@ -135,6 +144,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:.74rem;font-weight:700;}
 .badge.avail{background:#D4EDDA;color:#155724;}.badge.claimed{background:#E8E0D8;color:var(--muted);}
 .action-btns{display:flex;gap:6px;flex-wrap:wrap;}
+/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:#2D2D2D;color:#fff;padding:11px 20px;border-radius:13px;font-size:.86rem;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.on{transform:translateY(0);opacity:1;}
 .toast.ok{background:#155724;}.toast.ng{background:var(--red);}
@@ -148,7 +158,6 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="top-nav">
   <div class="top-nav-logo">🏫 新莊國小 失物招領</div>
   <div style="display:flex;align-items:center;gap:8px;">
@@ -221,35 +230,43 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
         <button class="btn btn-red" onclick="logout()">登出</button>
       </div>
     </div>
+
     <div class="stats-row">
       <div class="stat-card"><div class="s-num" id="stTotal">–</div><div class="s-lbl">📦 總件數</div></div>
       <div class="stat-card"><div class="s-num" id="stAvail" style="color:var(--green)">–</div><div class="s-lbl">✅ 待認領</div></div>
       <div class="stat-card"><div class="s-num" id="stClaimed" style="color:var(--muted)">–</div><div class="s-lbl">📤 已認領</div></div>
+      <div class="stat-card"><div class="s-num" id="stSize" style="color:#856404">–</div><div class="s-lbl">💾 Firestore 使用</div></div>
     </div>
 
-    <!-- Add form -->
+    <!-- ADD FORM -->
     <div class="form-card">
       <h3>➕ 新增失物</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;">
+        <!-- Image -->
         <div>
           <div class="fg">
-            <label>📸 物品照片</label>
+            <label>📸 物品照片（自動壓縮後存入 Firestore）</label>
             <div class="upload-zone" id="uz">
               <input type="file" accept="image/*" id="imgIn" onchange="onFile(event)"/>
-              <div style="font-size:36px;margin-bottom:8px;">☁️</div>
-              <p><strong>點擊</strong>或拖曳圖片到這裡<br><span style="font-size:.76rem;">上傳至 Firebase Storage</span></p>
+              <div style="font-size:36px;margin-bottom:8px;">📷</div>
+              <p><strong>點擊選擇</strong>或拖曳圖片<br>
+              <span style="font-size:.76rem;color:var(--muted);">自動壓縮到 300KB 以下 · 不需要 Storage</span></p>
             </div>
             <div class="prev-box" id="prevBox">
               <img id="prevImg" src="" alt=""/>
-              <p class="prev-ok">✅ 圖片已選好（儲存時上傳）</p>
-              <button class="prev-rm" onclick="rmImg()">✕ 移除</button>
+              <div class="prev-meta">
+                <span id="sizeLabel" class="size-ok">✅ 壓縮完成</span>
+                <span id="sizeValue" style="color:var(--muted)"></span>
+              </div>
+              <button class="prev-rm" onclick="rmImg()">✕ 移除圖片</button>
             </div>
-            <div class="prog" id="prog">
-              <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0"></div></div>
-              <p class="prog-lbl" id="progLbl">上傳中…</p>
+            <div class="compress-bar" id="compBar">
+              <div class="compress-fill" id="compFill" style="width:0"></div>
             </div>
+            <p class="compress-lbl" id="compLbl"></p>
           </div>
         </div>
+        <!-- Fields -->
         <div class="form-grid">
           <div class="fg"><label>物品名稱 *</label><input id="fName" placeholder="例：藍色水壺"/></div>
           <div class="fg"><label>類別 *</label>
@@ -258,7 +275,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
               <option>書包</option><option>3C</option><option>餐具</option><option>其他</option>
             </select>
           </div>
-          <div class="fg"><label>表情符號</label><input id="fEmoji" placeholder="例：🍶" maxlength="4"/></div>
+          <div class="fg"><label>表情符號（無圖時顯示）</label><input id="fEmoji" placeholder="例：🍶" maxlength="4"/></div>
           <div class="fg"><label>拾獲日期 *</label><input type="date" id="fDate"/></div>
           <div class="fg full"><label>拾獲地點 *</label><input id="fLoc" placeholder="例：操場旁走廊"/></div>
           <div class="fg full"><label>物品描述</label><textarea id="fDesc" placeholder="顏色、特徵、尺寸…"></textarea></div>
@@ -266,11 +283,11 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       </div>
       <div style="margin-top:18px;display:flex;gap:10px;justify-content:flex-end;">
         <button class="btn btn-gray" onclick="clearForm()">清除</button>
-        <button class="btn btn-orange" onclick="addItem()" id="addBtn">☁️ 儲存上傳</button>
+        <button class="btn btn-orange" onclick="addItem()" id="addBtn">💾 儲存</button>
       </div>
     </div>
 
-    <!-- List -->
+    <!-- LIST -->
     <div class="form-card">
       <h3>📋 所有失物（即時同步）</h3>
       <div style="overflow-x:auto;">
@@ -310,8 +327,6 @@ import { initializeApp }     from 'https://www.gstatic.com/firebasejs/11.6.0/fir
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc,
          doc, query, orderBy, onSnapshot, serverTimestamp }
                               from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
-import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, deleteObject }
-                              from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js';
 
 const app = initializeApp({
   apiKey:            "AIzaSyAbRPDqG92GguA05UGXE5IuDIW7b7gjN6k",
@@ -321,37 +336,34 @@ const app = initializeApp({
   messagingSenderId: "57366181323",
   appId:             "1:57366181323:web:30a5b6f0a59468f949324e"
 });
-const db      = getFirestore(app);
-const storage = getStorage(app);
+const db = getFirestore(app);
 
-// ──────────────────────────────────────────────────────────────────
-// 🔑 管理員密碼（純前端防護，適合低安全需求的學校場景）
+// ── 密碼 ──────────────────────────────────────────────────────────
 const ADMIN_PW = '073411373';
-// ──────────────────────────────────────────────────────────────────
 
+// ── State ─────────────────────────────────────────────────────────
 let items    = [];
 let filter   = '全部';
-let selFile  = null;
+let imgB64   = '';     // 壓縮後的 base64
 let loggedIn = false;
 
-// Firebase 連線狀態
-function fbSt(s) {
+// ── Firebase 連線狀態 ─────────────────────────────────────────────
+function setFbSt(s) {
   const el  = document.getElementById('fbSt');
-  const map = { ok:'☁️ 已連線', wait:'⏳ 連線中', err:'❌ 連線失敗' };
   el.className = `fb-status ${s}`;
-  el.textContent = map[s];
+  el.textContent = {ok:'☁️ 已連線', wait:'⏳ 連線中', err:'❌ 連線失敗'}[s];
 }
 
-// 即時監聽 Firestore
+// ── 即時監聽 ──────────────────────────────────────────────────────
 const q = query(collection(db,'items'), orderBy('createdAt','desc'));
 onSnapshot(q,
   snap => {
-    fbSt('ok');
+    setFbSt('ok');
     items = snap.docs.map(d => ({id:d.id,...d.data()}));
     renderPublic();
     if (loggedIn) renderAdmin();
   },
-  e => { fbSt('err'); console.error(e); toast('⚠️ Firebase 連線問題','ng'); }
+  e => { setFbSt('err'); console.error(e); toast('⚠️ Firebase 連線問題','ng'); }
 );
 
 // ── Views ─────────────────────────────────────────────────────────
@@ -359,59 +371,104 @@ window.showView = v => {
   ['publicView','loginView'].forEach(id => document.getElementById(id).classList.remove('active'));
   document.getElementById('adminView').style.display = 'none';
   document.getElementById('adminBtn').style.display = '';
-  if      (v === 'public')  document.getElementById('publicView').classList.add('active');
-  else if (v === 'login')   { document.getElementById('loginView').classList.add('active'); document.getElementById('pwIn').value=''; document.getElementById('loginErr').textContent=''; }
-  else if (v === 'admin')   { document.getElementById('adminView').style.display='block'; document.getElementById('adminBtn').style.display='none'; setToday(); renderAdmin(); }
+  if      (v==='public') document.getElementById('publicView').classList.add('active');
+  else if (v==='login')  { document.getElementById('loginView').classList.add('active'); document.getElementById('pwIn').value=''; document.getElementById('loginErr').textContent=''; }
+  else if (v==='admin')  { document.getElementById('adminView').style.display='block'; document.getElementById('adminBtn').style.display='none'; setToday(); renderAdmin(); }
 };
 
 // ── Login ─────────────────────────────────────────────────────────
 window.tryLogin = () => {
   if (document.getElementById('pwIn').value === ADMIN_PW) {
-    loggedIn = true;
-    showView('admin');
-    toast('✅ 登入成功','ok');
+    loggedIn = true; showView('admin'); toast('✅ 登入成功','ok');
   } else {
     document.getElementById('loginErr').textContent = '❌ 密碼錯誤';
     document.getElementById('pwIn').value = '';
   }
 };
-window.logout = () => { loggedIn = false; showView('public'); toast('已登出'); };
+window.logout = () => { loggedIn=false; showView('public'); toast('已登出'); };
 
-// ── Image ─────────────────────────────────────────────────────────
-window.onFile = e => { const f = e.target.files[0]; if(f) setPrev(f); };
-function setPrev(f) {
-  if (!f.type.startsWith('image/')) { toast('⚠️ 請選圖片','ng'); return; }
-  if (f.size > 5*1024*1024)         { toast('⚠️ 圖片不超過 5MB','ng'); return; }
-  selFile = f;
-  const r = new FileReader();
-  r.onload = ev => { document.getElementById('prevImg').src=ev.target.result; document.getElementById('prevBox').style.display='block'; document.getElementById('uz').style.display='none'; };
-  r.readAsDataURL(f);
+// ══════════════════════════════════════════════════════════════════
+// 🖼️ 圖片壓縮核心（Canvas 重新繪製，縮小尺寸 + 降低品質）
+// 目標：寬度最大 800px，JPEG 品質 0.75，輸出約 100~300KB
+// Firestore 文件上限 1MB，base64 約 400KB，安全
+// ══════════════════════════════════════════════════════════════════
+function compressImage(file, maxW=800, quality=0.75) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        // 計算縮放尺寸
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const b64 = canvas.toDataURL('image/jpeg', quality);
+        resolve(b64);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
-window.rmImg = () => { selFile=null; document.getElementById('prevBox').style.display='none'; document.getElementById('uz').style.display='flex'; document.getElementById('imgIn').value=''; };
 
+function b64SizeKB(b64) {
+  // base64 字串長度 × 0.75 = 位元組數
+  return Math.round((b64.length * 0.75) / 1024);
+}
+
+// ── Image handling ────────────────────────────────────────────────
+window.onFile = async e => {
+  const file = e.target.files[0]; if (!file) return;
+  if (!file.type.startsWith('image/')) { toast('⚠️ 請選擇圖片','ng'); return; }
+
+  // 顯示壓縮動畫
+  document.getElementById('compBar').style.display = 'block';
+  document.getElementById('compLbl').textContent   = '壓縮中…';
+  document.getElementById('compFill').style.width  = '30%';
+
+  const origKB = Math.round(file.size/1024);
+  imgB64 = await compressImage(file);
+  const compKB = b64SizeKB(imgB64);
+
+  document.getElementById('compFill').style.width  = '100%';
+  document.getElementById('compLbl').textContent   = `原始 ${origKB}KB → 壓縮後 ${compKB}KB`;
+  setTimeout(() => {
+    document.getElementById('compBar').style.display = 'none';
+    document.getElementById('compLbl').textContent   = '';
+  }, 1800);
+
+  // 顯示預覽
+  document.getElementById('prevImg').src = imgB64;
+  document.getElementById('prevBox').style.display = 'block';
+  document.getElementById('uz').style.display      = 'none';
+
+  const ok = compKB < 700;
+  document.getElementById('sizeLabel').textContent  = ok ? '✅ 壓縮完成' : '⚠️ 稍大，建議換小圖';
+  document.getElementById('sizeLabel').className    = ok ? 'size-ok' : 'size-warn';
+  document.getElementById('sizeValue').textContent  = `${compKB} KB`;
+};
+
+window.rmImg = () => {
+  imgB64 = '';
+  document.getElementById('prevBox').style.display = 'none';
+  document.getElementById('uz').style.display      = 'flex';
+  document.getElementById('imgIn').value           = '';
+};
+
+// Drag & drop
 const uz = document.getElementById('uz');
 uz.addEventListener('dragover',  e => { e.preventDefault(); uz.classList.add('drag'); });
 uz.addEventListener('dragleave', () => uz.classList.remove('drag'));
-uz.addEventListener('drop',      e => { e.preventDefault(); uz.classList.remove('drag'); const f=e.dataTransfer.files[0]; if(f) setPrev(f); });
-
-async function uploadImg(file) {
-  return new Promise((res,rej) => {
-    const ext  = file.name.split('.').pop();
-    const path = `items/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    const task = uploadBytesResumable(sRef(storage,path),file);
-    document.getElementById('prog').style.display = 'block';
-    task.on('state_changed',
-      s => { const p=Math.round(s.bytesTransferred/s.totalBytes*100); document.getElementById('progFill').style.width=p+'%'; document.getElementById('progLbl').textContent=`上傳中 ${p}%`; },
-      e => { document.getElementById('prog').style.display='none'; rej(e); },
-      async () => {
-        document.getElementById('progFill').style.width='100%';
-        document.getElementById('progLbl').textContent='✅ 完成！';
-        setTimeout(()=>document.getElementById('prog').style.display='none',1000);
-        res({ url: await getDownloadURL(task.snapshot.ref), path });
-      }
-    );
-  });
-}
+uz.addEventListener('drop', e => {
+  e.preventDefault(); uz.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f) { document.getElementById('imgIn').files; onFile({target:{files:[f]}}); }
+});
 
 // ── Add item ──────────────────────────────────────────────────────
 window.addItem = async () => {
@@ -420,28 +477,42 @@ window.addItem = async () => {
   const date = document.getElementById('fDate').value;
   const loc  = document.getElementById('fLoc').value.trim();
   if (!name||!cat||!date||!loc) { toast('⚠️ 請填必填欄位','ng'); return; }
+
+  // 檢查 base64 大小（Firestore 單文件上限 ~1MB）
+  if (imgB64 && b64SizeKB(imgB64) > 900) {
+    toast('⚠️ 圖片壓縮後仍過大，請換一張','ng'); return;
+  }
+
   const btn = document.getElementById('addBtn');
-  btn.textContent='處理中…'; btn.disabled=true;
+  btn.textContent='儲存中…'; btn.disabled=true;
   try {
-    let imageUrl='', storagePath='';
-    if (selFile) { const r=await uploadImg(selFile); imageUrl=r.url; storagePath=r.path; }
-    await addDoc(collection(db,'items'),{
+    await addDoc(collection(db,'items'), {
       name, category:cat,
       emoji: document.getElementById('fEmoji').value.trim()||'📦',
       foundDate:date, foundLocation:loc,
       description: document.getElementById('fDesc').value.trim(),
-      imageUrl, storagePath, status:'待認領', createdAt:serverTimestamp()
+      imageBase64: imgB64,   // 直接存入 Firestore，不需要 Storage！
+      status:'待認領',
+      createdAt:serverTimestamp()
     });
     clearForm(); toast('✅ 已儲存！','ok');
-  } catch(e) { toast('❌ 失敗：'+e.message,'ng'); }
-  finally { btn.textContent='☁️ 儲存上傳'; btn.disabled=false; }
+  } catch(e) {
+    console.error(e);
+    toast('❌ 失敗：'+e.message,'ng');
+  } finally {
+    btn.textContent='💾 儲存'; btn.disabled=false;
+  }
 };
-window.clearForm = () => { ['fName','fLoc','fDesc','fEmoji'].forEach(id=>document.getElementById(id).value=''); document.getElementById('fCat').value=''; setToday(); rmImg(); };
+
+window.clearForm = () => {
+  ['fName','fLoc','fDesc','fEmoji'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCat').value=''; setToday(); rmImg();
+};
 
 // ── Delete / Toggle ───────────────────────────────────────────────
-window.delItem = async (id,sp) => {
+window.delItem = async id => {
   if (!confirm('確定刪除？')) return;
-  try { await deleteDoc(doc(db,'items',id)); if(sp){try{await deleteObject(sRef(storage,sp));}catch{}} toast('🗑️ 已刪除'); }
+  try { await deleteDoc(doc(db,'items',id)); toast('🗑️ 已刪除'); }
   catch { toast('❌ 刪除失敗','ng'); }
 };
 window.toggleClaimed = async (id,cur) => {
@@ -459,13 +530,19 @@ function renderPublic() {
   if (!filtered.length) { g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><p>目前沒有${filter==='全部'?'':' '+filter}類失物</p></div>`; return; }
   g.innerHTML='';
   filtered.forEach((item,i)=>{
-    const img = item.imageUrl?`<div class="card-img"><img src="${item.imageUrl}" loading="lazy" alt="${esc(item.name)}"/></div>`:`<div class="card-img">${item.emoji||'📦'}</div>`;
+    const img = item.imageBase64
+      ? `<div class="card-img"><img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/></div>`
+      : `<div class="card-img">${item.emoji||'📦'}</div>`;
     const c=document.createElement('div'); c.className='card'; c.style.animationDelay=`${i*.06}s`;
     c.innerHTML=`${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>`;
     c.onclick=()=>openModal(item); g.appendChild(c);
   });
 }
-window.setFilter = cat => { filter=cat; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===cat||(cat==='全部'&&b.textContent.trim()==='全部'))); renderPublic(); };
+window.setFilter = cat => {
+  filter=cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===cat||(cat==='全部'&&b.textContent.trim()==='全部')));
+  renderPublic();
+};
 
 // ── Render admin ──────────────────────────────────────────────────
 function renderAdmin() {
@@ -473,21 +550,40 @@ function renderAdmin() {
   document.getElementById('stTotal').textContent=items.length;
   document.getElementById('stAvail').textContent=a;
   document.getElementById('stClaimed').textContent=items.length-a;
+  // 估算總 base64 大小
+  const totalKB = items.reduce((sum,i)=>sum+(i.imageBase64?b64SizeKB(i.imageBase64):0),0);
+  document.getElementById('stSize').textContent = totalKB>1024?`${(totalKB/1024).toFixed(1)}MB`:`${totalKB}KB`;
+
   const tb=document.getElementById('adminBody');
   if (!items.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">目前沒有資料</td></tr>';return;}
   tb.innerHTML=items.map(item=>{
     const cl=item.status==='已認領';
-    const sp=item.storagePath?`'${item.storagePath}'`:"''";
-    return `<tr><td><div class="ainfo"><div class="athumb">${item.imageUrl?`<img src="${item.imageUrl}" loading="lazy"/>`:(item.emoji||'📦')}</div><div><div class="aname">${esc(item.name)}</div><div class="aloc">📍 ${esc(item.foundLocation)}</div></div></div></td><td><span class="card-cat cat-${item.category}">${item.category}</span></td><td>${fmtDate(item.foundDate)}</td><td><span class="badge ${cl?'claimed':'avail'}">${item.status}</span></td><td><div class="action-btns"><button class="btn btn-sm ${cl?'btn-gray':'btn-green-s'}" onclick="toggleClaimed('${item.id}','${item.status}')">${cl?'↩ 恢復':'✅ 認領'}</button><button class="btn btn-sm btn-red" onclick="delItem('${item.id}',${sp})">🗑️</button></div></td></tr>`;
+    return `<tr>
+      <td><div class="ainfo">
+        <div class="athumb">${item.imageBase64?`<img src="${item.imageBase64}" loading="lazy"/>`:(item.emoji||'📦')}</div>
+        <div><div class="aname">${esc(item.name)}</div><div class="aloc">📍 ${esc(item.foundLocation)}</div></div>
+      </div></td>
+      <td><span class="card-cat cat-${item.category}">${item.category}</span></td>
+      <td>${fmtDate(item.foundDate)}</td>
+      <td><span class="badge ${cl?'claimed':'avail'}">${item.status}</span></td>
+      <td><div class="action-btns">
+        <button class="btn btn-sm ${cl?'btn-gray':'btn-green-s'}" onclick="toggleClaimed('${item.id}','${item.status}')">${cl?'↩ 恢復':'✅ 認領'}</button>
+        <button class="btn btn-sm btn-red" onclick="delItem('${item.id}')">🗑️</button>
+      </div></td></tr>`;
   }).join('');
 }
 
 // ── Modal ─────────────────────────────────────────────────────────
 window.openModal = item => {
-  document.getElementById('mImg').innerHTML=item.imageUrl?`<img src="${item.imageUrl}" alt="${esc(item.name)}"/>`:`<span style="font-size:80px">${item.emoji||'📦'}</span>`;
-  document.getElementById('mCat').innerHTML=`<span class="card-cat cat-${item.category}">${item.category}</span>`;
-  document.getElementById('mName').textContent=item.name;
-  document.getElementById('mInfo').innerHTML=`<div class="modal-row"><span class="modal-row-icon">📅</span><span class="modal-row-label">拾獲日期</span><span>${fmtDate(item.foundDate)}</span></div><div class="modal-row"><span class="modal-row-icon">📍</span><span class="modal-row-label">拾獲地點</span><span>${esc(item.foundLocation)}</span></div>${item.description?`<div class="modal-row"><span class="modal-row-icon">📝</span><span class="modal-row-label">物品描述</span><span>${esc(item.description)}</span></div>`:''}`;
+  document.getElementById('mImg').innerHTML = item.imageBase64
+    ? `<img src="${item.imageBase64}" alt="${esc(item.name)}"/>`
+    : `<span style="font-size:80px">${item.emoji||'📦'}</span>`;
+  document.getElementById('mCat').innerHTML  = `<span class="card-cat cat-${item.category}">${item.category}</span>`;
+  document.getElementById('mName').textContent = item.name;
+  document.getElementById('mInfo').innerHTML = `
+    <div class="modal-row"><span class="modal-row-icon">📅</span><span class="modal-row-label">拾獲日期</span><span>${fmtDate(item.foundDate)}</span></div>
+    <div class="modal-row"><span class="modal-row-icon">📍</span><span class="modal-row-label">拾獲地點</span><span>${esc(item.foundLocation)}</span></div>
+    ${item.description?`<div class="modal-row"><span class="modal-row-icon">📝</span><span class="modal-row-label">物品描述</span><span>${esc(item.description)}</span></div>`:''}`;
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow='hidden';
 };
@@ -498,6 +594,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 function setToday(){ document.getElementById('fDate').value=new Date().toISOString().split('T')[0]; }
 function fmtDate(d){ if(!d)return''; const dt=new Date(d+'T00:00:00'); return `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日`; }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function b64SizeKB(b64){ return Math.round((b64.length*0.75)/1024); }
 let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
