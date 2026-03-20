@@ -37,19 +37,19 @@ const CSS = `
   position: fixed;
   bottom: ${CONFIG.fabBottom}; left: ${CONFIG.fabLeft};
   z-index: 99999;
-  width: 64px; height: 64px;
+  width: 68px; height: 68px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #FF6B35, #FF9A6C);
+  background: #4ECDC4;
   color: #fff; border: none; cursor: pointer;
-  box-shadow: 0 4px 20px rgba(255,107,53,.50);
+  box-shadow: 0 4px 16px rgba(78,205,196,.50);
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1px;
+  align-items: center; justify-content: center; gap: 2px;
   transition: transform .2s, box-shadow .2s;
   outline: none;
 }
-#lf-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(255,107,53,.6); }
-#lf-fab-icon { font-size: 24px; line-height: 1; }
-#lf-fab-text { font-size: 9px; font-weight: 700; letter-spacing: .3px; white-space: nowrap; }
+#lf-fab:hover { background: #3ab8b0; box-shadow: 0 6px 24px rgba(78,205,196,.6); }
+#lf-fab-icon { font-size: 26px; line-height: 1; }
+#lf-fab-text { font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; }
 #lf-badge {
   position: absolute; top: -4px; right: -4px;
   background: #FF4757; color: #fff; border-radius: 50%;
@@ -62,23 +62,30 @@ const CSS = `
 /* 浮動視窗 */
 #lf-panel {
   position: fixed;
-  bottom: 104px; left: ${CONFIG.fabLeft};
+  bottom: calc(10% + 80px); left: ${CONFIG.fabLeft};
   z-index: 99998;
-  width: 300px;
+  width: 340px;
+  height: 480px;
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 40px rgba(0,0,0,.18);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  border: 1px solid #b2f0ec;
   overflow: hidden;
+  display: none;
+  flex-direction: column;
   transform: scale(.88) translateY(16px);
   opacity: 0; pointer-events: none;
-  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .25s;
+  font-family: sans-serif;
 }
-#lf-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+#lf-panel.open { display: flex; transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+@media(min-width:701px){ #lf-panel{ height: calc(75vh - 80px); } }
+@media(max-width:700px){ #lf-panel{ width: calc(100vw - 16px); height: calc(75vh - 80px); } }
 
 #lf-head {
-  background: linear-gradient(135deg, #FF6B35, #FF8E53);
-  padding: 13px 14px 11px;
-  display: flex; align-items: center; justify-content: space-between;
+  background: #4ECDC4;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
 }
 #lf-head-title { color: #fff; font-weight: 900; font-size: .92rem; display: flex; align-items: center; gap: 5px; }
 #lf-head-close {
@@ -94,7 +101,7 @@ const CSS = `
   padding: 5px 12px; text-align: center; line-height: 1.4;
 }
 
-#lf-list { max-height: 300px; overflow-y: auto; padding: 6px 0; }
+#lf-list { flex: 1; overflow-y: auto; padding: 6px 0; background: #f5f4ff; }
 #lf-list::-webkit-scrollbar { width: 4px; }
 #lf-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
 
@@ -158,16 +165,27 @@ document.head.appendChild(styleEl);
 const root = document.createElement('div');
 root.id = 'lf-widget-root';
 root.innerHTML = `
+  <span id="lf-dot-badge" style="position:fixed;bottom:calc(10% + 58px);left:calc(2.5% - 6px);width:12px;height:12px;background:#4ade80;border-radius:50%;border:2px solid #fff;z-index:99999;display:none;"></span>
   <button id="lf-fab" title="失物招領">
-    <span id="lf-badge">0</span>
+    <span id="lf-badge"></span>
     <span id="lf-fab-icon">🎒</span>
     <span id="lf-fab-text">失物招領</span>
   </button>
 
   <div id="lf-panel">
     <div id="lf-head">
-      <div id="lf-head-title">🎒 新莊國小 失物招領</div>
-      <button id="lf-head-close" title="關閉">✕</button>
+      <div id="lf-head-av" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🎒</div>
+      <div style="flex:1;">
+        <div id="lf-head-title" style="font-size:14px;font-weight:600;color:#fff;">新莊國小 失物招領</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.85);margin-top:1px;"><span style="color:#4ade80;">●</span> 即時同步</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;margin-right:6px;">
+        <button onclick="lfSetSize(13)" style="background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:11px;font-family:sans-serif;">小</button>
+        <button onclick="lfSetSize(15)" style="background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;font-family:sans-serif;">中</button>
+        <button onclick="lfSetSize(17)" style="background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;font-family:sans-serif;">大</button>
+      </div>
+      <button id="lf-fs-btn" onclick="lfFullscreen()" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="放大">⛶</button>
+      <button id="lf-head-close" title="關閉" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
     </div>
     <div id="lf-notice">📍 ${CONFIG.pickupInfo}</div>
     <div id="lf-list"><div id="lf-loading">⏳ 載入中…</div></div>
@@ -196,8 +214,46 @@ document.addEventListener('click', e => {
   if (!panel.contains(e.target) && !fab.contains(e.target)) close();
 });
 
-function open()  { isOpen = true;  document.getElementById('lf-panel').classList.add('open'); }
-function close() { isOpen = false; document.getElementById('lf-panel').classList.remove('open'); }
+function open()  {
+  isOpen = true;
+  document.getElementById('lf-panel').classList.add('open');
+  document.getElementById('lf-dot-badge').style.display = 'none';
+}
+function close() {
+  isOpen = false;
+  document.getElementById('lf-panel').classList.remove('open');
+}
+
+window.lfSetSize = function(size) {
+  document.querySelectorAll('.lf-name,.lf-meta,.lf-cat').forEach(el => el.style.fontSize = size + 'px');
+  document.getElementById('lf-notice').style.fontSize = size + 'px';
+  window._lfSize = size;
+};
+
+var _lfFullscreen = false;
+window.lfFullscreen = function() {
+  var win = document.getElementById('lf-panel');
+  var btn = document.getElementById('lf-fs-btn');
+  _lfFullscreen = !_lfFullscreen;
+  if (_lfFullscreen) {
+    win.style.top    = '2%';
+    win.style.left   = '2%';
+    win.style.right  = '2%';
+    win.style.bottom = '18%';
+    win.style.width  = 'auto';
+    win.style.height = 'auto';
+    win.style.zIndex = '999999';
+    win.style.borderRadius = '16px';
+    btn.textContent = '⊡';
+    btn.title = '縮小';
+  } else {
+    win.style.top = ''; win.style.left = ''; win.style.right = '';
+    win.style.bottom = ''; win.style.width = ''; win.style.height = '';
+    win.style.zIndex = ''; win.style.borderRadius = '';
+    btn.textContent = '⛶';
+    btn.title = '放大';
+  }
+};
 
 // ════════════════════════════════════════════
 // 4. 動態載入 Firebase（避免與校網其他 JS 衝突）
@@ -280,9 +336,8 @@ function renderItems(items) {
 }
 
 function updateBadge(count) {
-  const badge = document.getElementById('lf-badge');
-  badge.textContent = count;
-  badge.classList.toggle('show', count > 0);
+  const dot = document.getElementById('lf-dot-badge');
+  if (dot) dot.style.display = count > 0 ? 'block' : 'none';
 }
 
 function setStatus(ok, text) {
