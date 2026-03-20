@@ -65,14 +65,14 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .skeleton{background:linear-gradient(90deg,#F0EAE2 25%,#FFE8D5 50%,#F0EAE2 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--radius);aspect-ratio:1/1;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 /* MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.55);z-index:1000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.55);z-index:1000;backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
 .overlay.open{display:flex;animation:fadeIn .2s ease;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.modal{background:#fff;border-radius:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.22);animation:popUp .28s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.modal{background:#fff;border-radius:24px;max-width:520px;width:100%;max-height:calc(100vh - 32px);display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.22);animation:popUp .28s cubic-bezier(.34,1.56,.64,1);position:relative;margin:auto;}
 @keyframes popUp{from{transform:scale(.85) translateY(30px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
-.modal-img{width:100%;aspect-ratio:4/3;overflow:hidden;background:#F5EFE8;border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:center;font-size:80px;}
+.modal-img{width:100%;height:240px;flex-shrink:0;overflow:hidden;background:#F5EFE8;border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:center;font-size:80px;}
 .modal-img img{width:100%;height:100%;object-fit:cover;}
-.modal-body{padding:24px 28px 28px;}
+.modal-body{padding:24px 28px 28px;overflow-y:auto;flex:1;}
 .modal-name{font-size:1.6rem;font-weight:900;margin-bottom:16px;}
 .modal-info{display:grid;gap:12px;margin-bottom:20px;}
 .modal-row{display:flex;gap:12px;align-items:flex-start;font-size:.92rem;padding:10px 14px;background:#FAFAF8;border-radius:12px;}
@@ -156,6 +156,47 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .edit-img-actions{display:flex;gap:8px;margin-bottom:12px;}
 .edit-img-actions .btn{flex:1;padding:8px;font-size:.8rem;}
 
+
+/* PAGE TABS */
+.page-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:28px;}
+.page-tab{padding:10px 20px;font-size:.88rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:.18s;}
+.page-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.page-tab:hover:not(.active){color:var(--text);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+/* ADMIN BAR */
+#adminBar{display:none;background:linear-gradient(135deg,#2D2D2D,#444);padding:10px 24px;position:sticky;top:52px;z-index:190;}
+#adminBar.show{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.admin-bar-badge{background:var(--accent);color:#2D2D2D;border-radius:100px;padding:3px 12px;font-size:.78rem;font-weight:800;}
+.admin-bar-sep{color:rgba(255,255,255,.3);margin:0 4px;}
+.admin-bar-btn{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:.15s;}
+.admin-bar-btn:hover{background:rgba(255,255,255,.22);}
+.admin-bar-btn.add{background:var(--primary);border-color:var(--primary);}
+.admin-bar-btn.add:hover{background:var(--primary-d);}
+/* CLAIMED */
+.claimed-list{display:grid;gap:12px;}
+.claimed-card{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;display:flex;align-items:center;gap:14px;border-left:4px solid var(--secondary);}
+.claimed-thumb{width:52px;height:52px;border-radius:10px;overflow:hidden;background:#F0EAE2;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.claimed-thumb img{width:100%;height:100%;object-fit:cover;}
+.claimed-info{flex:1;}
+.claimed-name{font-weight:700;font-size:.95rem;}
+.claimed-meta{font-size:.78rem;color:var(--muted);margin-top:3px;}
+.claimed-date{font-size:.78rem;color:var(--secondary);font-weight:700;white-space:nowrap;}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.stats-box{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;}
+.stats-box h3{font-size:.95rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-label{font-size:.82rem;font-weight:700;min-width:64px;color:var(--text);}
+.bar-wrap{flex:1;background:#F0EAE2;border-radius:100px;height:10px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--primary);border-radius:100px;transition:width .6s;}
+.bar-count{font-size:.8rem;color:var(--muted);min-width:28px;text-align:right;}
+.stats-empty{text-align:center;color:var(--muted);font-size:.88rem;padding:20px;}
+/* CARD CLAIM */
+.card-claim-bar{display:none;width:100%;background:var(--secondary);color:#fff;border:none;padding:8px;font-size:.82rem;font-weight:800;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:.15s;}
+.card-claim-bar:hover{background:#3ab8b0;}
+.card.admin-mode .card-claim-bar{display:block;}
+.card.admin-mode{border-color:rgba(78,205,196,.3);}
+
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:#2D2D2D;color:#fff;padding:11px 20px;border-radius:13px;font-size:.86rem;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.on{transform:translateY(0);opacity:1;}
@@ -178,6 +219,15 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
   </div>
 </nav>
 
+<!-- ADMIN BAR -->
+<div id="adminBar">
+  <span class="admin-bar-badge">🔑 管理員模式</span>
+  <span class="admin-bar-sep">|</span>
+  <button class="admin-bar-btn add" onclick="openQuickAdd()">➕ 新增失物</button>
+  <button class="admin-bar-btn" onclick="showView('admin')">🗂️ 管理後台</button>
+  <button class="admin-bar-btn" onclick="doLogout()">登出</button>
+</div>
+
 <!-- ══ PUBLIC ══ -->
 <div id="publicView" class="view active">
   <header>
@@ -190,30 +240,50 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       </div>
     </div>
   </header>
-  <div class="notice-bar">📢 認領時間：週一至週五 07:30–16:30 ｜ 地點：學務處（行政樓一樓）</div>
+  <div class="notice-bar">📢 認領時間：週一至週五 07:30–16:30 ｜ 地點：學務處（行政樓一樓）｜ <a href="tel:07-3411373#111" style="color:#fff;text-decoration:underline;font-weight:700;">☎ 07-3411373 分機111</a></div>
   <main>
-    <div class="section-title">
-      <h2>目前招領物品</h2>
-      <span class="count-badge" id="pubCount">載入中…</span>
+    <!-- 分頁標籤 -->
+    <div class="page-tabs">
+      <button class="page-tab active" onclick="switchTab('avail')">📋 待認領 <span class="count-badge" id="pubCount" style="font-size:.7rem;padding:1px 8px;">…</span></button>
+      <button class="page-tab" onclick="switchTab('claimed')">✅ 已認領 <span id="claimedCount" style="font-size:.7rem;color:var(--muted);margin-left:4px;"></span></button>
+      <button class="page-tab" onclick="switchTab('stats')">📊 統計數據</button>
     </div>
-    <div class="filters">
-      <button class="filter-btn active" onclick="setFilter('全部')">全部</button>
-      <button class="filter-btn" onclick="setFilter('文具')">✏️ 文具</button>
-      <button class="filter-btn" onclick="setFilter('衣物')">👕 衣物</button>
-      <button class="filter-btn" onclick="setFilter('水壺')">🍶 水壺</button>
-      <button class="filter-btn" onclick="setFilter('書包')">🎒 書包</button>
-      <button class="filter-btn" onclick="setFilter('3C')">📱 3C</button>
-      <button class="filter-btn" onclick="setFilter('餐具')">🥄 餐具</button>
-      <button class="filter-btn" onclick="setFilter('其他')">📦 其他</button>
+
+    <!-- 待認領 -->
+    <div class="tab-pane active" id="tabAvail">
+      <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('全部')">全部</button>
+        <button class="filter-btn" onclick="setFilter('文具')">✏️ 文具</button>
+        <button class="filter-btn" onclick="setFilter('衣物')">👕 衣物</button>
+        <button class="filter-btn" onclick="setFilter('水壺')">🍶 水壺</button>
+        <button class="filter-btn" onclick="setFilter('書包')">🎒 書包</button>
+        <button class="filter-btn" onclick="setFilter('3C')">📱 3C</button>
+        <button class="filter-btn" onclick="setFilter('餐具')">🥄 餐具</button>
+        <button class="filter-btn" onclick="setFilter('其他')">📦 其他</button>
+      </div>
+      <div class="grid" id="pubGrid">
+        <div class="skeleton"></div><div class="skeleton"></div>
+        <div class="skeleton"></div><div class="skeleton"></div>
+      </div>
     </div>
-    <div class="grid" id="pubGrid">
-      <div class="skeleton"></div><div class="skeleton"></div>
-      <div class="skeleton"></div><div class="skeleton"></div>
+
+    <!-- 已認領 -->
+    <div class="tab-pane" id="tabClaimed">
+      <div class="claimed-list" id="claimedList">
+        <div class="stats-empty">載入中…</div>
+      </div>
+    </div>
+
+    <!-- 統計 -->
+    <div class="tab-pane" id="tabStats">
+      <div class="stats-grid" id="statsGrid">
+        <div class="stats-empty">載入中…</div>
+      </div>
     </div>
   </main>
   <footer style="background:#2D2D2D;color:rgba(255,255,255,.7);text-align:center;padding:24px 20px;font-size:.82rem;line-height:1.8;">
     <p>🏫 <strong style="color:#fff">新莊國小</strong> 學務處 失物招領系統</p>
-    <p>如有疑問請至學務處詢問</p>
+    <p>如有疑問請洽學務處 <a href="tel:07-3411373#111" style="color:#FFD166;font-weight:700;">☎ 07-3411373 分機111</a></p>
   </footer>
 </div>
 
@@ -239,7 +309,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       <h2>🗂️ 失物管理後台</h2>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-outline" onclick="showView('public')">← 公告頁</button>
-        <button class="btn btn-red" onclick="logout()">登出</button>
+        <button class="btn btn-red" onclick="doLogout()">登出</button>
       </div>
     </div>
 
@@ -287,7 +357,6 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
               <option>書包</option><option>3C</option><option>餐具</option><option>其他</option>
             </select>
           </div>
-          <div class="fg"><label>表情符號（無圖時顯示）</label><input id="fEmoji" placeholder="例：🍶" maxlength="4"/></div>
           <div class="fg"><label>拾獲日期 *</label><input type="date" id="fDate"/></div>
           <div class="fg full"><label>拾獲地點 *</label><input id="fLoc" placeholder="例：操場旁走廊"/></div>
           <div class="fg full"><label>物品描述</label><textarea id="fDesc" placeholder="顏色、特徵、尺寸…"></textarea></div>
@@ -324,10 +393,53 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       <div class="pickup-box">
         <h3>🏫 如何認領？</h3>
         <p>請攜帶 <strong>識別證件（學生證或家長證件）</strong>，<br>
-        親自前往 <strong>學務處（行政樓一樓）</strong> 說明失物特徵即可認領。<br><br>
+        親自前往 <strong>學務處（行政樓一樓）</strong> 說明失物特徵即可認領。<br><br>📞 洽詢電話：<a href="tel:07-3411373#111" style="color:#A0522D;font-weight:700;text-decoration:none;">07-3411373 分機 111</a><br><br>
         未於 <strong>30天內</strong> 認領之物品，將依規定處理。</p>
       </div>
       <button class="btn-primary" onclick="closeModal()">✅ 我知道了，關閉視窗</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK ADD MODAL -->
+<div class="edit-overlay" id="quickAddOverlay" onclick="if(event.target===this)closeQuickAdd()">
+  <div class="edit-modal">
+    <div class="edit-modal-head" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));">
+      <h3>➕ 快速新增失物</h3>
+      <button class="edit-modal-close" onclick="closeQuickAdd()">✕</button>
+    </div>
+    <div class="edit-modal-body">
+      <div class="fg" style="margin-bottom:16px;">
+        <label>📸 物品照片</label>
+        <div class="upload-zone" id="qaUz">
+          <input type="file" accept="image/*" id="qaImgIn" onchange="qaOnFile(event)"/>
+          <div style="font-size:28px;margin-bottom:6px;">📷</div>
+          <p><strong>點擊上傳</strong>或拖曳圖片（自動壓縮）</p>
+        </div>
+        <div class="prev-box" id="qaPrevBox">
+          <img id="qaPrevImg" src="" alt=""/>
+          <div class="prev-meta"><span id="qaSizeLabel" class="size-ok">✅ 壓縮完成</span><span id="qaSizeValue" style="color:var(--muted)"></span></div>
+          <button class="prev-rm" onclick="qaRmImg()">✕ 移除</button>
+        </div>
+        <div class="compress-bar" id="qaCompBar"><div class="compress-fill" id="qaCompFill" style="width:0"></div></div>
+        <p class="compress-lbl" id="qaCompLbl"></p>
+      </div>
+      <div class="form-grid">
+        <div class="fg"><label>物品名稱 *</label><input id="qaName" placeholder="例：藍色水壺"/></div>
+        <div class="fg"><label>類別 *</label>
+          <select id="qaCat"><option value="">選擇類別</option>
+            <option>文具</option><option>衣物</option><option>水壺</option>
+            <option>書包</option><option>3C</option><option>餐具</option><option>其他</option>
+          </select>
+        </div>
+        <div class="fg"><label>拾獲日期 *</label><input type="date" id="qaDate"/></div>
+        <div class="fg full"><label>拾獲地點 *</label><input id="qaLoc" placeholder="例：操場旁走廊"/></div>
+        <div class="fg full"><label>物品描述</label><textarea id="qaDesc" placeholder="顏色、特徵、尺寸…"></textarea></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">
+        <button class="btn btn-gray" onclick="closeQuickAdd()">取消</button>
+        <button class="btn btn-orange" onclick="saveQuickAdd()" id="qaBtn">💾 儲存</button>
+      </div>
     </div>
   </div>
 </div>
@@ -371,7 +483,6 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
             <option>書包</option><option>3C</option><option>餐具</option><option>其他</option>
           </select>
         </div>
-        <div class="fg"><label>表情符號</label><input id="eEmoji" maxlength="4"/></div>
         <div class="fg"><label>拾獲日期 *</label><input type="date" id="eDate"/></div>
         <div class="fg full"><label>拾獲地點 *</label><input id="eLoc"/></div>
         <div class="fg full"><label>物品描述</label><textarea id="eDesc"></textarea></div>
@@ -425,6 +536,8 @@ onSnapshot(q,
     setFbSt('ok');
     items = snap.docs.map(d => ({id:d.id,...d.data()}));
     renderPublic();
+    renderClaimed();
+    renderStats();
     if (loggedIn) renderAdmin();
   },
   e => { setFbSt('err'); console.error(e); toast('⚠️ Firebase 連線問題','ng'); }
@@ -455,15 +568,26 @@ window.tryLogin = () => {
   if (document.getElementById('pwIn').value === ADMIN_PW) {
     loggedIn = true;
     closeLoginModal();
-    showView('admin');
-    toast('✅ 登入成功','ok');
+    // 留在首頁，顯示管理員工具列
+    document.getElementById('adminBar').classList.add('show');
+    document.getElementById('adminBtn').style.display = 'none';
+    renderPublic();
+    toast('✅ 管理員已登入，可直接編輯','ok');
   } else {
     document.getElementById('loginErr').textContent = '❌ 密碼錯誤';
     document.getElementById('pwIn').value = '';
     document.getElementById('pwIn').focus();
   }
 };
-window.logout = () => { loggedIn=false; showView('public'); toast('已登出'); };
+window.doLogout = () => {
+  loggedIn = false;
+  document.getElementById('adminBar').classList.remove('show');
+  document.getElementById('adminBtn').style.display = '';
+  document.getElementById('publicView').classList.add('active');
+  document.getElementById('adminView').style.display = 'none';
+  renderPublic();
+  toast('已登出');
+};
 
 // ══════════════════════════════════════════════════════════════════
 // 🖼️ 圖片壓縮核心（Canvas 重新繪製，縮小尺寸 + 降低品質）
@@ -566,7 +690,7 @@ window.addItem = async () => {
   try {
     await addDoc(collection(db,'items'), {
       name, category:cat,
-      emoji: document.getElementById('fEmoji').value.trim()||'📦',
+      emoji: '',
       foundDate:date, foundLocation:loc,
       description: document.getElementById('fDesc').value.trim(),
       imageBase64: imgB64,   // 直接存入 Firestore，不需要 Storage！
@@ -583,7 +707,7 @@ window.addItem = async () => {
 };
 
 window.clearForm = () => {
-  ['fName','fLoc','fDesc','fEmoji'].forEach(id=>document.getElementById(id).value='');
+  ['fName','fLoc','fDesc'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fCat').value=''; setToday(); rmImg();
 };
 
@@ -610,11 +734,14 @@ function renderPublic() {
   filtered.forEach((item,i)=>{
     const img = item.imageBase64
       ? `<div class="card-img"><img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/></div>`
-      : `<div class="card-img">${item.emoji||'📦'}</div>`;
-    const c=document.createElement('div'); c.className='card'; c.style.animationDelay=`${i*.06}s`;
+      : `<div class="card-img" style="background:#F0EAE2;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg></div>\`;
+    const c=document.createElement('div');
+    c.className='card' + (loggedIn?' admin-mode':'');
+    c.style.animationDelay=`${i*.06}s`;
     c.style.position='relative';
-    const editBtn = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️ 編輯</button>` : '';
-    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>`;
+    const editBtn = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
+    const claimBar = loggedIn ? `<button class="card-claim-bar" onclick="event.stopPropagation();toggleClaimed('${item.id}','待認領')">✅ 標記已認領</button>` : '';
+    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>${claimBar}`;
     c.onclick=()=>openModal(item); g.appendChild(c);
   });
 }
@@ -640,7 +767,7 @@ function renderAdmin() {
     const cl=item.status==='已認領';
     return `<tr>
       <td><div class="ainfo">
-        <div class="athumb">${item.imageBase64?`<img src="${item.imageBase64}" loading="lazy"/>`:(item.emoji||'📦')}</div>
+        <div class="athumb">${item.imageBase64?`<img src="${item.imageBase64}" loading="lazy"/>`:'<svg width="28" height="28" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg>'}</div>
         <div><div class="aname">${esc(item.name)}</div><div class="aloc">📍 ${esc(item.foundLocation)}</div></div>
       </div></td>
       <td><span class="card-cat cat-${item.category}">${item.category}</span></td>
@@ -658,7 +785,7 @@ function renderAdmin() {
 window.openModal = item => {
   document.getElementById('mImg').innerHTML = item.imageBase64
     ? `<img src="${item.imageBase64}" alt="${esc(item.name)}"/>`
-    : `<span style="font-size:80px">${item.emoji||'📦'}</span>`;
+    : `<svg width="80" height="80" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg>\`;
   document.getElementById('mCat').innerHTML  = `<span class="card-cat cat-${item.category}">${item.category}</span>`;
   document.getElementById('mName').textContent = item.name;
   document.getElementById('mInfo').innerHTML = `
@@ -680,6 +807,185 @@ function toast(msg,type=''){ const el=document.getElementById('toast'); el.textC
 
 setToday();
 
+// ── Tab switching ─────────────────────────────────────────────────
+let currentTab = 'avail';
+window.switchTab = tab => {
+  currentTab = tab;
+  document.querySelectorAll('.page-tab').forEach((b,i)=>{
+    b.classList.toggle('active', ['avail','claimed','stats'][i]===tab);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById({avail:'tabAvail',claimed:'tabClaimed',stats:'tabStats'}[tab]).classList.add('active');
+};
+
+// ── Render claimed items ──────────────────────────────────────────
+function renderClaimed() {
+  const claimed = items.filter(i=>i.status==='已認領');
+  const el = document.getElementById('claimedList');
+  const cnt = document.getElementById('claimedCount');
+  if(cnt) cnt.textContent = `${claimed.length} 件`;
+
+  if (!claimed.length) {
+    el.innerHTML = '<div class="stats-empty">目前還沒有已認領的物品</div>'; return;
+  }
+  const placeholder = `<svg width="52" height="52" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg>`;
+  el.innerHTML = claimed.map(item=>`
+    <div class="claimed-card">
+      <div class="claimed-thumb">${item.imageBase64?`<img src="${item.imageBase64}" loading="lazy"/>`:(placeholder)}</div>
+      <div class="claimed-info">
+        <div class="claimed-name">${esc(item.name)}</div>
+        <div class="claimed-meta"><span class="card-cat cat-${item.category}" style="font-size:.68rem">${item.category}</span> &nbsp;📍 ${esc(item.foundLocation)}</div>
+        <div class="claimed-meta">拾獲：${fmtDate(item.foundDate)}</div>
+      </div>
+      <div class="claimed-date">✅ 已認領</div>
+    </div>`).join('');
+}
+
+// ── Render stats ──────────────────────────────────────────────────
+function renderStats() {
+  const el = document.getElementById('statsGrid');
+  if (!items.length) { el.innerHTML='<div class="stats-empty">目前尚無資料</div>'; return; }
+
+  const all = items; // 含已認領，算全部歷史
+
+  // 1. 類別統計
+  const catMap = {};
+  all.forEach(i=>{ catMap[i.category]=(catMap[i.category]||0)+1; });
+  const catSorted = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+  const catMax = catSorted[0]?.[1]||1;
+  const catHtml = catSorted.map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-label">${k}</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/catMax*100)}%"></div></div>
+      <div class="bar-count">${v}</div>
+    </div>`).join('');
+
+  // 2. 月份統計
+  const monMap = {};
+  all.forEach(i=>{
+    if(!i.foundDate) return;
+    const m = i.foundDate.slice(0,7); // YYYY-MM
+    monMap[m]=(monMap[m]||0)+1;
+  });
+  const monSorted = Object.entries(monMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const monMax = monSorted[0]?.[1]||1;
+  const monHtml = monSorted.map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-label">${k.slice(5)}月</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/monMax*100)}%;background:var(--secondary)"></div></div>
+      <div class="bar-count">${v}</div>
+    </div>`).join('');
+
+  // 3. 地點統計
+  const locMap = {};
+  all.forEach(i=>{ if(i.foundLocation){ const k=i.foundLocation.slice(0,8); locMap[k]=(locMap[k]||0)+1; } });
+  const locSorted = Object.entries(locMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const locMax = locSorted[0]?.[1]||1;
+  const locHtml = locSorted.map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-label" style="min-width:80px;font-size:.76rem;">${k}</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/locMax*100)}%;background:#FF9A6C"></div></div>
+      <div class="bar-count">${v}</div>
+    </div>`).join('');
+
+  // 4. 概況數字
+  const avail   = all.filter(i=>i.status==='待認領').length;
+  const claimed = all.filter(i=>i.status==='已認領').length;
+  const rate    = all.length ? Math.round(claimed/all.length*100) : 0;
+
+  el.innerHTML = `
+    <div class="stats-box" style="grid-column:1/-1">
+      <h3>📌 整體概況</h3>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <div class="stat-card"><div class="s-num">${all.length}</div><div class="s-lbl">📦 歷史總件數</div></div>
+        <div class="stat-card"><div class="s-num" style="color:var(--green)">${avail}</div><div class="s-lbl">🔍 待認領</div></div>
+        <div class="stat-card"><div class="s-num" style="color:var(--secondary)">${claimed}</div><div class="s-lbl">✅ 已認領</div></div>
+        <div class="stat-card"><div class="s-num" style="color:var(--primary)">${rate}%</div><div class="s-lbl">📈 認領率</div></div>
+      </div>
+    </div>
+    <div class="stats-box">
+      <h3>🏷️ 最常見類別</h3>
+      ${catHtml||'<div class="stats-empty">無資料</div>'}
+    </div>
+    <div class="stats-box">
+      <h3>📅 失物高峰月份</h3>
+      ${monHtml||'<div class="stats-empty">無資料</div>'}
+    </div>
+    <div class="stats-box">
+      <h3>📍 最常拾獲地點</h3>
+      ${locHtml||'<div class="stats-empty">無資料</div>'}
+    </div>`;
+}
+
+// ── Quick Add ────────────────────────────────────────────────────
+let qaImgB64 = '';
+window.openQuickAdd = () => {
+  qaImgB64 = '';
+  ['qaName','qaLoc','qaDesc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('qaCat').value='';
+  document.getElementById('qaDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('qaPrevBox').style.display='none';
+  document.getElementById('qaUz').style.display='flex';
+  document.getElementById('qaCompBar').style.display='none';
+  document.getElementById('quickAddOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+};
+window.closeQuickAdd = () => {
+  document.getElementById('quickAddOverlay').classList.remove('open');
+  document.body.style.overflow='';
+};
+window.qaOnFile = async e => {
+  const file = e.target.files[0]; if(!file) return;
+  if(!file.type.startsWith('image/')) { toast('⚠️ 請選圖片','ng'); return; }
+  document.getElementById('qaCompBar').style.display='block';
+  document.getElementById('qaCompFill').style.width='30%';
+  document.getElementById('qaCompLbl').textContent='壓縮中…';
+  qaImgB64 = await compressImage(file);
+  const kb = b64SizeKB(qaImgB64);
+  document.getElementById('qaCompFill').style.width='100%';
+  document.getElementById('qaCompLbl').textContent=`壓縮完成 ${kb}KB`;
+  setTimeout(()=>{document.getElementById('qaCompBar').style.display='none';document.getElementById('qaCompLbl').textContent='';},1200);
+  document.getElementById('qaPrevImg').src=qaImgB64;
+  document.getElementById('qaPrevBox').style.display='block';
+  document.getElementById('qaUz').style.display='none';
+  document.getElementById('qaImgIn').value='';
+};
+window.qaRmImg = () => {
+  qaImgB64='';
+  document.getElementById('qaPrevBox').style.display='none';
+  document.getElementById('qaUz').style.display='flex';
+  document.getElementById('qaImgIn').value='';
+};
+// qa drag & drop
+document.addEventListener('DOMContentLoaded',()=>{
+  const quz=document.getElementById('qaUz');
+  if(quz){
+    quz.addEventListener('dragover',e=>{e.preventDefault();quz.classList.add('drag');});
+    quz.addEventListener('dragleave',()=>quz.classList.remove('drag'));
+    quz.addEventListener('drop',e=>{e.preventDefault();quz.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)qaOnFile({target:{files:[f]}});});
+  }
+});
+window.saveQuickAdd = async () => {
+  const name = document.getElementById('qaName').value.trim();
+  const cat  = document.getElementById('qaCat').value;
+  const date = document.getElementById('qaDate').value;
+  const loc  = document.getElementById('qaLoc').value.trim();
+  if(!name||!cat||!date||!loc){ toast('⚠️ 請填必填欄位','ng'); return; }
+  const btn = document.getElementById('qaBtn');
+  btn.textContent='儲存中…'; btn.disabled=true;
+  try {
+    await addDoc(collection(db,'items'),{
+      name, category:cat, emoji:'',
+      foundDate:date, foundLocation:loc,
+      description:document.getElementById('qaDesc').value.trim(),
+      imageBase64:qaImgB64, status:'待認領', createdAt:serverTimestamp()
+    });
+    closeQuickAdd(); toast('✅ 已新增！','ok');
+  } catch(e){ toast('❌ 失敗：'+e.message,'ng'); }
+  finally { btn.textContent='💾 儲存'; btn.disabled=false; }
+};
+
+
 // ── Edit Modal ────────────────────────────────────────────────────
 let editItemId   = '';
 let editNewImgB64 = '';   // 新選的圖片
@@ -695,7 +1001,6 @@ window.openEditModal = id => {
   // 填入現有資料
   document.getElementById('eName').value  = item.name        || '';
   document.getElementById('eCat').value   = item.category    || '';
-  document.getElementById('eEmoji').value = item.emoji       || '';
   document.getElementById('eDate').value  = item.foundDate   || '';
   document.getElementById('eLoc').value   = item.foundLocation || '';
   document.getElementById('eDesc').value  = item.description || '';
@@ -776,7 +1081,7 @@ window.saveEdit = async () => {
   try {
     const update = {
       name, category:cat,
-      emoji: document.getElementById('eEmoji').value.trim()||'📦',
+      emoji: '',
       foundDate:date, foundLocation:loc,
       description: document.getElementById('eDesc').value.trim(),
     };
