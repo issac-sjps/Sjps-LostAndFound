@@ -332,6 +332,58 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
   </div>
 </div>
 
+<!-- EDIT MODAL -->
+<div class="edit-overlay" id="editOverlay" onclick="if(event.target===this)closeEditModal()">
+  <div class="edit-modal">
+    <div class="edit-modal-head">
+      <h3>✏️ 編輯失物資料</h3>
+      <button class="edit-modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="edit-modal-body">
+      <div class="fg" style="margin-bottom:16px;">
+        <label>📸 物品照片</label>
+        <div id="editImgCurrentWrap" style="display:none;">
+          <img id="editImgCurrent" class="edit-img-current" src="" alt=""/>
+          <div class="edit-img-actions">
+            <button class="btn btn-gray" onclick="document.getElementById('editImgInput').click()">🔄 換圖片</button>
+            <button class="btn btn-red" onclick="editRemoveImg()">🗑️ 刪除圖片</button>
+          </div>
+        </div>
+        <div id="editUploadZone" class="upload-zone" style="display:none;">
+          <input type="file" accept="image/*" id="editImgInput" onchange="editOnFile(event)"/>
+          <div style="font-size:28px;margin-bottom:6px;">📷</div>
+          <p><strong>點擊上傳</strong>新圖片（自動壓縮）</p>
+        </div>
+        <div id="editNewPreviewWrap" style="display:none;margin-top:8px;">
+          <img id="editNewPreview" style="width:100%;max-height:160px;object-fit:cover;border-radius:11px;border:2px solid var(--secondary);" src="" alt=""/>
+          <p style="font-size:.76rem;color:var(--green);font-weight:700;margin-top:4px;text-align:center;">✅ 新圖片已選好</p>
+          <button class="prev-rm" onclick="editCancelNewImg()">✕ 取消換圖</button>
+        </div>
+        <div class="compress-bar" id="editCompBar"><div class="compress-fill" id="editCompFill" style="width:0"></div></div>
+        <p class="compress-lbl" id="editCompLbl"></p>
+      </div>
+      <div class="form-grid" style="margin-bottom:0;">
+        <div class="fg"><label>物品名稱 *</label><input id="eName" placeholder="例：藍色水壺"/></div>
+        <div class="fg"><label>類別 *</label>
+          <select id="eCat">
+            <option value="">選擇類別</option>
+            <option>文具</option><option>衣物</option><option>水壺</option>
+            <option>書包</option><option>3C</option><option>餐具</option><option>其他</option>
+          </select>
+        </div>
+        <div class="fg"><label>表情符號</label><input id="eEmoji" maxlength="4"/></div>
+        <div class="fg"><label>拾獲日期 *</label><input type="date" id="eDate"/></div>
+        <div class="fg full"><label>拾獲地點 *</label><input id="eLoc"/></div>
+        <div class="fg full"><label>物品描述</label><textarea id="eDesc"></textarea></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">
+        <button class="btn btn-gray" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-orange" onclick="saveEdit()" id="saveEditBtn">💾 儲存修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
