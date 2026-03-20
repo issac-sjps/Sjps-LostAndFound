@@ -271,6 +271,31 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .export-check-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.88rem;}
 .export-check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;}
 
+.claim-overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.6);z-index:2000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;}
+.claim-overlay.open{display:flex;animation:fadeIn .2s ease;}
+.claim-modal{background:#fff;border-radius:22px;max-width:400px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.25);animation:popUp .25s cubic-bezier(.34,1.56,.64,1);}
+.claim-head{background:linear-gradient(135deg,var(--secondary),#3ab8b0);padding:16px 20px;border-radius:22px 22px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.claim-head h3{color:#fff;font-size:1rem;font-weight:900;}
+.claim-head-close{background:rgba(255,255,255,.25);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+.claim-body{padding:20px 22px 22px;}
+.claim-item-preview{background:#F5F5F0;border-radius:12px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.claim-item-thumb{width:44px;height:44px;border-radius:8px;overflow:hidden;background:#E8DDD3;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.claim-item-thumb img{width:100%;height:100%;object-fit:cover;}
+.claim-item-info .ci-name{font-weight:700;font-size:.92rem;}
+.claim-item-info .ci-num{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.claim-time-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:.82rem;color:var(--muted);}
+.claim-time-badge{background:#E8F8F5;color:#0C6C78;border-radius:8px;padding:4px 10px;font-weight:700;font-size:.82rem;}
+.claim-input-wrap{margin-bottom:8px;}
+.claim-input-wrap label{display:block;font-size:.8rem;font-weight:800;color:var(--muted);margin-bottom:6px;}
+.claim-input-wrap input{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:12px;font-size:.95rem;font-family:'Noto Sans TC',sans-serif;outline:none;transition:.2s;}
+.claim-input-wrap input:focus{border-color:var(--secondary);}
+.claim-hint{font-size:.74rem;color:var(--muted);margin-bottom:16px;line-height:1.6;padding:0 2px;}
+.claim-btns{display:flex;flex-direction:column;gap:8px;}
+.btn-claim-confirm{background:var(--secondary);color:#fff;border:none;border-radius:12px;padding:12px;font-size:.95rem;font-weight:800;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:.18s;}
+.btn-claim-confirm:hover{background:#3ab8b0;}
+.btn-claim-lazy{background:#F0EAE2;color:var(--muted);border:none;border-radius:12px;padding:10px;font-size:.85rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:.18s;}
+.btn-claim-lazy:hover{background:#E5DDD5;color:var(--text);}
+.claimer-badge{font-size:.74rem;color:#0C6C78;background:#D1ECF1;border-radius:6px;padding:2px 8px;font-weight:700;}
 </style>
 </head>
 <body>
@@ -463,7 +488,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       <h3>📋 所有失物（即時同步）</h3>
       <div style="overflow-x:auto;">
         <table class="admin-table">
-          <thead><tr><th>物品</th><th>類別</th><th>編號</th><th>日期</th><th>狀態</th><th>操作</th></tr></thead>
+          <thead><tr><th>物品</th><th>類別</th><th>編號</th><th>日期</th><th>狀態</th><th>認領人</th><th>操作</th></tr></thead>
           <tbody id="adminBody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">載入中…</td></tr></tbody>
         </table>
       </div>
@@ -629,6 +654,43 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
         <button class="btn btn-gray" onclick="closeExportModal()">取消</button>
         <button class="btn btn-orange" onclick="doExport()" id="expBtn">📥 匯出 Excel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLAIM MODAL -->
+<div class="claim-overlay" id="claimOverlay" onclick="if(event.target===this)closeClaimModal()">
+  <div class="claim-modal">
+    <div class="claim-head">
+      <h3>✅ 標記已認領</h3>
+      <button class="claim-head-close" onclick="closeClaimModal()">✕</button>
+    </div>
+    <div class="claim-body">
+      <!-- 物品預覽 -->
+      <div class="claim-item-preview">
+        <div class="claim-item-thumb" id="claimThumb"></div>
+        <div class="claim-item-info">
+          <div class="ci-name" id="claimItemName">—</div>
+          <div class="ci-num" id="claimItemNum"></div>
+        </div>
+      </div>
+      <!-- 認領時間 -->
+      <div class="claim-time-row">
+        📅 認領時間：<span class="claim-time-badge" id="claimTimeDisplay"></span>
+      </div>
+      <!-- 認領人輸入 -->
+      <div class="claim-input-wrap">
+        <label>👤 認領人（選填）</label>
+        <input id="claimByInput" placeholder="例：10106　或　10106王大明　或　王大明" autocomplete="off"/>
+      </div>
+      <p class="claim-hint">
+        可輸入：班級座號、姓名、或兩者皆填<br>
+        不想記錄請點「懶得紀錄」，一樣可以標記認領
+      </p>
+      <div class="claim-btns">
+        <button class="btn-claim-confirm" onclick="confirmClaim()">✅ 確認認領</button>
+        <button class="btn-claim-lazy" onclick="confirmClaimLazy()">😅 懶得紀錄，直接標記認領</button>
       </div>
     </div>
   </div>
@@ -854,11 +916,77 @@ window.delItem = async id => {
   try { await deleteDoc(doc(db,'items',id)); toast('🗑️ 已刪除'); }
   catch { toast('❌ 刪除失敗','ng'); }
 };
-window.toggleClaimed = async (id,cur) => {
-  const nxt = cur==='待認領'?'已認領':'待認領';
-  try { await updateDoc(doc(db,'items',id),{status:nxt}); toast(nxt==='已認領'?'✅ 已標記認領':'🔄 已恢復'); }
-  catch { toast('❌ 更新失敗','ng'); }
+window.toggleClaimed = (id, cur) => {
+  if (cur === '已認領') {
+    // 直接恢復為待認領
+    updateDoc(doc(db,'items',id), {status:'待認領', claimedBy:'', claimedAt:''})
+      .then(()=>toast('🔄 已恢復為待認領'))
+      .catch(()=>toast('❌ 更新失敗','ng'));
+    return;
+  }
+  // 開啟認領 modal
+  openClaimModal(id);
 };
+
+// ── Claim Modal ────────────────────────────────────────────────────
+let _claimId = '';
+window.openClaimModal = id => {
+  _claimId = id;
+  const item = items.find(i=>i.id===id);
+  if (!item) return;
+  // 物品預覽
+  const thumb = document.getElementById('claimThumb');
+  thumb.innerHTML = item.imageBase64
+    ? `<img src="${item.imageBase64}" alt=""/>`
+    : `<svg width="44" height="44" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg>`;
+  document.getElementById('claimItemName').textContent = item.name;
+  document.getElementById('claimItemNum').textContent  = item.itemNumber ? `# ${item.itemNumber}` : '';
+  // 當下時間
+  const now = new Date();
+  const rocY = now.getFullYear()-1911;
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const dd = String(now.getDate()).padStart(2,'0');
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mi = String(now.getMinutes()).padStart(2,'0');
+  const days = ['日','一','二','三','四','五','六'];
+  document.getElementById('claimTimeDisplay').textContent =
+    `${rocY}/${mm}/${dd}（${days[now.getDay()]}）${hh}:${mi}`;
+  document.getElementById('claimByInput').value = '';
+  document.getElementById('claimOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(()=>document.getElementById('claimByInput').focus(), 150);
+};
+
+window.closeClaimModal = () => {
+  document.getElementById('claimOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+window.confirmClaim = async () => {
+  const by = document.getElementById('claimByInput').value.trim() || '未登記';
+  await _doClaim(by);
+};
+window.confirmClaimLazy = async () => {
+  await _doClaim('懶得紀錄');
+};
+
+async function _doClaim(claimedBy) {
+  const now = new Date();
+  const rocY = now.getFullYear()-1911;
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const dd = String(now.getDate()).padStart(2,'0');
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mi = String(now.getMinutes()).padStart(2,'0');
+  const days = ['日','一','二','三','四','五','六'];
+  const claimedAt = `${rocY}/${mm}/${dd}（${days[now.getDay()]}）${hh}:${mi}`;
+  try {
+    await updateDoc(doc(db,'items',_claimId), {status:'已認領', claimedBy, claimedAt});
+    closeClaimModal();
+    toast(`✅ 已認領 — ${claimedBy}`,'ok');
+  } catch(e) {
+    toast('❌ 更新失敗','ng');
+  }
+}
 
 // ── Render public ─────────────────────────────────────────────────
 function renderPublic() {
@@ -964,6 +1092,7 @@ function renderAdmin() {
       <td><div class="aname">${item.itemNumber||'—'}</div></td>
       <td>${fmtDate(item.foundDate)}</td>
       <td><span class="badge ${cl?'claimed':'avail'}">${item.status}</span></td>
+      <td>${item.claimedBy?`<span class="claimer-badge">${esc(item.claimedBy)}</span><br><span style="font-size:.7rem;color:var(--muted)">${item.claimedAt||''}</span>`:'-'}</td>
       <td><div class="action-btns">
         <button class="btn btn-sm btn-outline" onclick="openEditModal('${item.id}')">✏️ 編輯</button>
         <button class="btn btn-sm ${cl?'btn-gray':'btn-green-s'}" onclick="toggleClaimed('${item.id}','${item.status}')">${cl?'↩ 恢復':'✅ 認領'}</button>
@@ -981,7 +1110,7 @@ window.openModal = item => {
   document.getElementById('mName').textContent = item.name;
   document.getElementById('mInfo').innerHTML = `
     ${item.itemNumber?`<div class="modal-row"><span class="modal-row-icon">🔢</span><span class="modal-row-label">物品編號</span><span style="font-weight:700;letter-spacing:1px;">${esc(item.itemNumber)}</span></div>`:''}
-    <div class="modal-row"><span class="modal-row-icon">📅</span><span class="modal-row-label">拾獲日期</span><span>${fmtDate(item.foundDate)}</span></div>
+    <div class="modal-row"><span class="modal-row-icon">📅</span><span class="modal-row-label">拾獲日期</span><span>${fmtDate(item.foundDate, true)}</span></div>
     <div class="modal-row"><span class="modal-row-icon">📍</span><span class="modal-row-label">拾獲地點</span><span>${esc(item.foundLocation)}</span></div>
     ${item.description?`<div class="modal-row"><span class="modal-row-icon">📝</span><span class="modal-row-label">物品描述</span><span>${esc(item.description)}</span></div>`:''}`;
   document.getElementById('overlay').classList.add('open');
@@ -992,7 +1121,14 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 
 // ── Utils ─────────────────────────────────────────────────────────
 function setToday(){ document.getElementById('fDate').value=new Date().toISOString().split('T')[0]; }
-function fmtDate(d){ if(!d)return''; const dt=new Date(d+'T00:00:00'); return `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日`; }
+function fmtDate(d, showWeekday=false) {
+  if(!d) return '';
+  const dt = new Date(d+'T00:00:00');
+  const base = `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日`;
+  if (!showWeekday) return base;
+  const days = ['日','一','二','三','四','五','六'];
+  return `${base}（${days[dt.getDay()]}）`;
+}
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
@@ -1244,6 +1380,8 @@ window.setMonthFilter = m => {
     b.classList.toggle('active', b.dataset.month === m)
   );
   renderPublic();
+  if (currentTab === 'stats') renderStats();
+  if (currentTab === 'claimed') renderClaimed();
 };
 
 // ── Build month sidebar from items ───────────────────────────────
@@ -1281,6 +1419,8 @@ window.switchTab = tab => {
   });
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   document.getElementById({avail:'tabAvail',claimed:'tabClaimed',stats:'tabStats'}[tab]).classList.add('active');
+  if (tab==='stats') renderStats();
+  if (tab==='claimed') renderClaimed();
 };
 
 // ── Render claimed items ──────────────────────────────────────────
@@ -1301,8 +1441,12 @@ function renderClaimed() {
         <div class="claimed-name">${esc(item.name)}</div>
         <div class="claimed-meta"><span class="card-cat cat-${item.category}" style="font-size:.68rem">${item.category}</span> &nbsp;📍 ${esc(item.foundLocation)}</div>
         <div class="claimed-meta">拾獲：${fmtDate(item.foundDate)}</div>
+        ${item.claimedBy?`<div class="claimed-meta" style="color:var(--secondary);font-weight:700;">👤 ${esc(item.claimedBy)}</div>`:''}
       </div>
-      <div class="claimed-date">✅ 已認領</div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="claimed-date">✅ 已認領</div>
+        ${item.claimedAt?`<div style="font-size:.7rem;color:var(--muted);margin-top:3px;">${esc(item.claimedAt)}</div>`:''}
+      </div>
     </div>`).join('');
 }
 
@@ -1311,74 +1455,109 @@ function renderStats() {
   const el = document.getElementById('statsGrid');
   if (!items.length) { el.innerHTML='<div class="stats-empty">目前尚無資料</div>'; return; }
 
-  const all = items; // 含已認領，算全部歷史
+  // 套用月份篩選
+  let all = items;
+  if (monthFilter !== '全部') {
+    all = items.filter(i => i.foundDate && i.foundDate.slice(0,7) === monthFilter);
+  }
+  if (!all.length) { el.innerHTML='<div class="stats-empty">本月尚無資料</div>'; return; }
 
-  // 1. 類別統計
+  const days = ['日','一','二','三','四','五','六'];
+
+  function barHtml(entries, max, color) {
+    return entries.map(([k,v])=>`
+      <div class="bar-row">
+        <div class="bar-label" style="min-width:76px;font-size:.78rem;">${k}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/max*100)}%;background:${color}"></div></div>
+        <div class="bar-count">${v}</div>
+      </div>`).join('');
+  }
+
+  // 1. 類別
   const catMap = {};
   all.forEach(i=>{ catMap[i.category]=(catMap[i.category]||0)+1; });
-  const catSorted = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
-  const catMax = catSorted[0]?.[1]||1;
-  const catHtml = catSorted.map(([k,v])=>`
-    <div class="bar-row">
-      <div class="bar-label">${k}</div>
-      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/catMax*100)}%"></div></div>
-      <div class="bar-count">${v}</div>
-    </div>`).join('');
+  const catS = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
 
-  // 2. 月份統計
+  // 2. 月份（只在全部模式顯示）
   const monMap = {};
-  all.forEach(i=>{
-    if(!i.foundDate) return;
-    const m = i.foundDate.slice(0,7); // YYYY-MM
-    monMap[m]=(monMap[m]||0)+1;
-  });
-  const monSorted = Object.entries(monMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const monMax = monSorted[0]?.[1]||1;
-  const monHtml = monSorted.map(([k,v])=>`
-    <div class="bar-row">
-      <div class="bar-label">${k.slice(5)}月</div>
-      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/monMax*100)}%;background:var(--secondary)"></div></div>
-      <div class="bar-count">${v}</div>
-    </div>`).join('');
+  all.forEach(i=>{ if(!i.foundDate)return; const m=i.foundDate.slice(0,7); monMap[m]=(monMap[m]||0)+1; });
+  const monS = Object.entries(monMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
-  // 3. 地點統計
+  // 3. 地點
   const locMap = {};
-  all.forEach(i=>{ if(i.foundLocation){ const k=i.foundLocation.slice(0,8); locMap[k]=(locMap[k]||0)+1; } });
-  const locSorted = Object.entries(locMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const locMax = locSorted[0]?.[1]||1;
-  const locHtml = locSorted.map(([k,v])=>`
-    <div class="bar-row">
-      <div class="bar-label" style="min-width:80px;font-size:.76rem;">${k}</div>
-      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/locMax*100)}%;background:#FF9A6C"></div></div>
-      <div class="bar-count">${v}</div>
-    </div>`).join('');
+  all.forEach(i=>{ if(i.foundLocation){const k=i.foundLocation.slice(0,10);locMap[k]=(locMap[k]||0)+1;} });
+  const locS = Object.entries(locMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
 
-  // 4. 概況數字
+  // 4. 星期（遺失高峰）
+  const wdMap = {'一':0,'二':0,'三':0,'四':0,'五':0,'六':0,'日':0};
+  all.forEach(i=>{
+    if(!i.foundDate)return;
+    const d = new Date(i.foundDate+'T00:00:00');
+    const wd = days[d.getDay()];
+    wdMap[wd] = (wdMap[wd]||0)+1;
+  });
+  const wdS = Object.entries(wdMap).sort((a,b)=>b[1]-a[1]);
+  const wdOrder = ['一','二','三','四','五','六','日'];
+  const wdOrdered = wdOrder.map(d=>[`週${d}`, wdMap[d]||0]);
+  const wdMax = Math.max(...Object.values(wdMap), 1);
+
+  // 5. 認領人排行
+  const claimerMap = {};
+  items.filter(i=>i.status==='已認領'&&i.claimedBy&&i.claimedBy!=='懶得紀錄'&&i.claimedBy!=='未登記').forEach(i=>{
+    claimerMap[i.claimedBy]=(claimerMap[i.claimedBy]||0)+1;
+  });
+  const claimerS = Object.entries(claimerMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const claimerMax = claimerS[0]?.[1]||1;
+
+  // 6. 概況
   const avail   = all.filter(i=>i.status==='待認領').length;
   const claimed = all.filter(i=>i.status==='已認領').length;
   const rate    = all.length ? Math.round(claimed/all.length*100) : 0;
+  const scopeLabel = monthFilter==='全部' ? '歷史總計' : (() => {
+    const y=parseInt(monthFilter.slice(0,4))-1911;
+    const m=parseInt(monthFilter.slice(5,7));
+    return `${y}年${String(m).padStart(2,'0')}月`;
+  })();
 
   el.innerHTML = `
     <div class="stats-box" style="grid-column:1/-1">
-      <h3>📌 整體概況</h3>
-      <div style="display:flex;gap:16px;flex-wrap:wrap;">
-        <div class="stat-card"><div class="s-num">${all.length}</div><div class="s-lbl">📦 歷史總件數</div></div>
+      <h3>📌 ${scopeLabel} 概況</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div class="stat-card"><div class="s-num">${all.length}</div><div class="s-lbl">📦 總件數</div></div>
         <div class="stat-card"><div class="s-num" style="color:var(--green)">${avail}</div><div class="s-lbl">🔍 待認領</div></div>
         <div class="stat-card"><div class="s-num" style="color:var(--secondary)">${claimed}</div><div class="s-lbl">✅ 已認領</div></div>
         <div class="stat-card"><div class="s-num" style="color:var(--primary)">${rate}%</div><div class="s-lbl">📈 認領率</div></div>
       </div>
     </div>
+
     <div class="stats-box">
-      <h3>🏷️ 最常見類別</h3>
-      ${catHtml||'<div class="stats-empty">無資料</div>'}
+      <h3>🏷️ 類別分布</h3>
+      ${catS.length ? barHtml(catS, catS[0][1], 'var(--primary)') : '<div class="stats-empty">無資料</div>'}
     </div>
+
     <div class="stats-box">
-      <h3>📅 失物高峰月份</h3>
-      ${monHtml||'<div class="stats-empty">無資料</div>'}
+      <h3>📅 各星期遺失件數</h3>
+      ${barHtml(wdOrdered, wdMax, 'var(--secondary)')}
     </div>
+
+    ${monthFilter==='全部' ? `
     <div class="stats-box">
-      <h3>📍 最常拾獲地點</h3>
-      ${locHtml||'<div class="stats-empty">無資料</div>'}
+      <h3>📆 高峰月份</h3>
+      ${monS.length ? barHtml(monS.map(([k,v])=>{
+        const y=parseInt(k.slice(0,4))-1911;
+        const m=parseInt(k.slice(5,7));
+        return [`${y}年${String(m).padStart(2,'0')}月`,v];
+      }), monS[0]?.[1]||1, '#FFD166') : '<div class="stats-empty">無資料</div>'}
+    </div>` : ''}
+
+    <div class="stats-box">
+      <h3>📍 高頻拾獲地點</h3>
+      ${locS.length ? barHtml(locS, locS[0][1], '#FF9A6C') : '<div class="stats-empty">無資料</div>'}
+    </div>
+
+    <div class="stats-box">
+      <h3>🏆 認領排行（不含懶得紀錄）</h3>
+      ${claimerS.length ? barHtml(claimerS, claimerMax, 'var(--green)') : '<div class="stats-empty">目前尚無認領紀錄</div>'}
     </div>`;
 }
 
