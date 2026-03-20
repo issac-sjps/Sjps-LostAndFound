@@ -140,6 +140,22 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:.74rem;font-weight:700;}
 .badge.avail{background:#D4EDDA;color:#155724;}.badge.claimed{background:#E8E0D8;color:var(--muted);}
 .action-btns{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* EDIT MODAL */
+.edit-overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.6);z-index:2000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;}
+.edit-overlay.open{display:flex;animation:fadeIn .2s ease;}
+.edit-modal{background:#fff;border-radius:22px;max-width:540px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.25);animation:popUp .25s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.edit-modal-head{background:linear-gradient(135deg,var(--secondary),#3ab8b0);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;border-radius:22px 22px 0 0;}
+.edit-modal-head h3{color:#fff;font-size:1.05rem;font-weight:900;}
+.edit-modal-close{background:rgba(255,255,255,.25);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+.edit-modal-body{padding:22px 24px 24px;}
+.card-edit-btn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:8px;padding:4px 9px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;opacity:0;transition:opacity .2s;z-index:10;}
+.card:hover .card-edit-btn{opacity:1;}
+.card-edit-btn:hover{background:var(--secondary);}
+.edit-img-current{width:100%;max-height:160px;object-fit:cover;border-radius:11px;border:2px solid var(--border);margin-bottom:8px;}
+.edit-img-actions{display:flex;gap:8px;margin-bottom:12px;}
+.edit-img-actions .btn{flex:1;padding:8px;font-size:.8rem;}
+
 /* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:#2D2D2D;color:#fff;padding:11px 20px;border-radius:13px;font-size:.86rem;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.on{transform:translateY(0);opacity:1;}
@@ -544,7 +560,9 @@ function renderPublic() {
       ? `<div class="card-img"><img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/></div>`
       : `<div class="card-img">${item.emoji||'📦'}</div>`;
     const c=document.createElement('div'); c.className='card'; c.style.animationDelay=`${i*.06}s`;
-    c.innerHTML=`${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>`;
+    c.style.position='relative';
+    const editBtn = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️ 編輯</button>` : '';
+    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>`;
     c.onclick=()=>openModal(item); g.appendChild(c);
   });
 }
@@ -577,6 +595,7 @@ function renderAdmin() {
       <td>${fmtDate(item.foundDate)}</td>
       <td><span class="badge ${cl?'claimed':'avail'}">${item.status}</span></td>
       <td><div class="action-btns">
+        <button class="btn btn-sm btn-outline" onclick="openEditModal('${item.id}')">✏️ 編輯</button>
         <button class="btn btn-sm ${cl?'btn-gray':'btn-green-s'}" onclick="toggleClaimed('${item.id}','${item.status}')">${cl?'↩ 恢復':'✅ 認領'}</button>
         <button class="btn btn-sm btn-red" onclick="delItem('${item.id}')">🗑️</button>
       </div></td></tr>`;
@@ -608,6 +627,136 @@ let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
 setToday();
+
+// ── Edit Modal ────────────────────────────────────────────────────
+let editItemId   = '';
+let editNewImgB64 = '';   // 新選的圖片
+let editDelImg    = false; // 是否刪除原圖
+
+window.openEditModal = id => {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  editItemId    = id;
+  editNewImgB64 = '';
+  editDelImg    = false;
+
+  // 填入現有資料
+  document.getElementById('eName').value  = item.name        || '';
+  document.getElementById('eCat').value   = item.category    || '';
+  document.getElementById('eEmoji').value = item.emoji       || '';
+  document.getElementById('eDate').value  = item.foundDate   || '';
+  document.getElementById('eLoc').value   = item.foundLocation || '';
+  document.getElementById('eDesc').value  = item.description || '';
+
+  // 圖片顯示
+  const hasImg = !!item.imageBase64;
+  document.getElementById('editImgCurrentWrap').style.display = hasImg ? 'block' : 'none';
+  document.getElementById('editUploadZone').style.display     = hasImg ? 'none'  : 'flex';
+  document.getElementById('editNewPreviewWrap').style.display = 'none';
+  document.getElementById('editCompBar').style.display        = 'none';
+  document.getElementById('editCompLbl').textContent          = '';
+  if (hasImg) document.getElementById('editImgCurrent').src = item.imageBase64;
+
+  document.getElementById('editOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeEditModal = () => {
+  document.getElementById('editOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+// 刪除現有圖片
+window.editRemoveImg = () => {
+  editDelImg = true;
+  editNewImgB64 = '';
+  document.getElementById('editImgCurrentWrap').style.display = 'none';
+  document.getElementById('editUploadZone').style.display     = 'flex';
+  document.getElementById('editNewPreviewWrap').style.display = 'none';
+};
+
+// 取消換圖（恢復顯示原圖）
+window.editCancelNewImg = () => {
+  editNewImgB64 = '';
+  const item = items.find(i => i.id === editItemId);
+  if (item && item.imageBase64 && !editDelImg) {
+    document.getElementById('editImgCurrentWrap').style.display = 'block';
+    document.getElementById('editUploadZone').style.display     = 'none';
+  } else {
+    document.getElementById('editUploadZone').style.display = 'flex';
+  }
+  document.getElementById('editNewPreviewWrap').style.display = 'none';
+};
+
+// 選新圖片
+window.editOnFile = async e => {
+  const file = e.target.files[0]; if (!file) return;
+  if (!file.type.startsWith('image/')) { toast('⚠️ 請選圖片','ng'); return; }
+  if (file.size > 5*1024*1024)         { toast('⚠️ 圖片不超過 5MB','ng'); return; }
+  document.getElementById('editCompBar').style.display = 'block';
+  document.getElementById('editCompFill').style.width  = '30%';
+  document.getElementById('editCompLbl').textContent   = '壓縮中…';
+  editNewImgB64 = await compressImage(file);
+  const kb = b64SizeKB(editNewImgB64);
+  document.getElementById('editCompFill').style.width  = '100%';
+  document.getElementById('editCompLbl').textContent   = `壓縮完成 ${kb} KB`;
+  setTimeout(()=>{ document.getElementById('editCompBar').style.display='none'; document.getElementById('editCompLbl').textContent=''; },1200);
+  // 顯示新預覽
+  document.getElementById('editNewPreview').src = editNewImgB64;
+  document.getElementById('editNewPreviewWrap').style.display = 'block';
+  document.getElementById('editUploadZone').style.display     = 'none';
+  document.getElementById('editImgCurrentWrap').style.display = 'none';
+  // 清掉 input 讓下次可以重選同一張
+  document.getElementById('editImgInput').value = '';
+};
+
+// 儲存編輯
+window.saveEdit = async () => {
+  const name = document.getElementById('eName').value.trim();
+  const cat  = document.getElementById('eCat').value;
+  const date = document.getElementById('eDate').value;
+  const loc  = document.getElementById('eLoc').value.trim();
+  if (!name||!cat||!date||!loc) { toast('⚠️ 請填必填欄位','ng'); return; }
+
+  const btn = document.getElementById('saveEditBtn');
+  btn.textContent = '儲存中…'; btn.disabled = true;
+
+  try {
+    const update = {
+      name, category:cat,
+      emoji: document.getElementById('eEmoji').value.trim()||'📦',
+      foundDate:date, foundLocation:loc,
+      description: document.getElementById('eDesc').value.trim(),
+    };
+
+    // 圖片邏輯
+    if (editNewImgB64) {
+      update.imageBase64 = editNewImgB64;   // 換新圖
+    } else if (editDelImg) {
+      update.imageBase64 = '';               // 刪除圖片
+    }
+    // 若兩者都沒有→保留原圖，不更新 imageBase64
+
+    await updateDoc(doc(db,'items',editItemId), update);
+    closeEditModal();
+    toast('✅ 修改已儲存！','ok');
+  } catch(e) {
+    console.error(e);
+    toast('❌ 儲存失敗：'+e.message,'ng');
+  } finally {
+    btn.textContent = '💾 儲存修改'; btn.disabled = false;
+  }
+};
+
+// Esc 關閉編輯 modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeEditModal();
+    closeModal();
+    closeLoginModal();
+  }
+});
+
 </script>
 </body>
 </html>
