@@ -11,8 +11,8 @@ const CONFIG = {
   fullPageUrl:  'https://issac-sjps.github.io/Sjps-LostAndFound/',  // 完整頁面網址
   pickupInfo:   '學務處（行政樓一樓）週一至週五 07:30–16:30',
   maxItems:     6,   // 浮動視窗最多顯示幾筆
-  fabBottom:    '28px',
-  fabRight:     '28px',
+  fabBottom:    '10%',
+  fabLeft:      '2.5%',
 };
 
 // ── Firebase 設定 ────────────────────────────────────────────────
@@ -35,7 +35,7 @@ const CSS = `
 /* 浮動按鈕 */
 #lf-fab {
   position: fixed;
-  bottom: ${CONFIG.fabBottom}; right: ${CONFIG.fabRight};
+  bottom: ${CONFIG.fabBottom}; left: ${CONFIG.fabLeft};
   z-index: 99999;
   width: 64px; height: 64px;
   border-radius: 50%;
@@ -62,7 +62,7 @@ const CSS = `
 /* 浮動視窗 */
 #lf-panel {
   position: fixed;
-  bottom: 104px; right: ${CONFIG.fabRight};
+  bottom: 104px; left: ${CONFIG.fabLeft};
   z-index: 99998;
   width: 300px;
   background: #fff;
