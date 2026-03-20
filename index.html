@@ -207,6 +207,43 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
   .form-grid{grid-template-columns:1fr;}
   .admin-table td:nth-child(3),.admin-table th:nth-child(3){display:none;}
 }
+
+/* LAYOUT WITH SIDEBAR */
+.pub-layout{display:flex;gap:24px;align-items:flex-start;}
+.sidebar{width:110px;flex-shrink:0;position:sticky;top:120px;}
+.sidebar-title{font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:10px;padding:0 4px;}
+.month-btn{display:block;width:100%;text-align:left;padding:8px 12px;border-radius:12px;border:2px solid transparent;background:#fff;font-size:.82rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;margin-bottom:6px;color:var(--text);transition:all .18s;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.month-btn:hover{border-color:var(--primary);color:var(--primary);}
+.month-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.month-btn .m-count{float:right;font-size:.7rem;opacity:.7;font-weight:900;}
+.pub-main{flex:1;min-width:0;}
+/* VIEW TOGGLE */
+.view-toggle{display:flex;align-items:center;gap:8px;margin-bottom:20px;justify-content:space-between;flex-wrap:wrap;}
+.view-toggle-btns{display:flex;gap:6px;background:#fff;padding:4px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.vt-btn{padding:6px 14px;border-radius:9px;border:none;background:none;font-size:.82rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;color:var(--muted);transition:all .18s;display:flex;align-items:center;gap:5px;}
+.vt-btn.active{background:var(--primary);color:#fff;}
+.vt-btn:hover:not(.active){background:#F5EDE3;color:var(--primary);}
+/* IMAGE GRID MODE */
+.grid-img{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
+.card-img-only{border-radius:14px;overflow:hidden;cursor:pointer;aspect-ratio:1/1;background:linear-gradient(135deg,#F0EAE2,#E5DDD3);position:relative;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 10px rgba(0,0,0,.08);animation:fadeUp .35s ease both;}
+.card-img-only:hover{transform:scale(1.04);box-shadow:0 6px 20px rgba(0,0,0,.15);}
+.card-img-only img{width:100%;height:100%;object-fit:cover;}
+.card-img-only .img-cat-pill{position:absolute;bottom:6px;left:6px;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:100px;backdrop-filter:blur(4px);}
+.card-img-only .img-name{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.65));color:#fff;font-size:.76rem;font-weight:700;padding:22px 8px 6px;line-height:1.3;}
+.card-img-only .img-no-photo{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.card-img-only .admin-edit-img{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:6px;padding:3px 7px;font-size:.68rem;font-weight:700;cursor:pointer;opacity:0;transition:opacity .2s;}
+.card-img-only:hover .admin-edit-img{opacity:1;}
+.card-img-only .claim-overlay{position:absolute;top:6px;left:6px;background:var(--secondary);color:#fff;border:none;border-radius:6px;padding:3px 8px;font-size:.68rem;font-weight:800;cursor:pointer;display:none;}
+.card-img-only.admin-mode .claim-overlay{display:block;}
+@media(max-width:700px){
+  .pub-layout{flex-direction:column;}
+  .sidebar{width:100%;position:static;display:flex;gap:6px;flex-wrap:wrap;}
+  .sidebar-title{display:none;}
+  .month-btn{width:auto;padding:5px 12px;font-size:.76rem;}
+  .month-btn .m-count{float:none;margin-left:4px;}
+  .grid-img{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));}
+}
+
 </style>
 </head>
 <body>
@@ -251,7 +288,8 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 
     <!-- 待認領 -->
     <div class="tab-pane active" id="tabAvail">
-      <div class="filters">
+      <!-- 類別篩選 -->
+      <div class="filters" id="catFilters">
         <button class="filter-btn active" onclick="setFilter('全部')">全部</button>
         <button class="filter-btn" onclick="setFilter('文具')">✏️ 文具</button>
         <button class="filter-btn" onclick="setFilter('衣物')">👕 衣物</button>
@@ -263,9 +301,30 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
         <button class="filter-btn" onclick="setFilter('運動')">⚽ 運動</button>
         <button class="filter-btn" onclick="setFilter('其他')">📦 其他</button>
       </div>
-      <div class="grid" id="pubGrid">
-        <div class="skeleton"></div><div class="skeleton"></div>
-        <div class="skeleton"></div><div class="skeleton"></div>
+
+      <!-- 視圖切換列 -->
+      <div class="view-toggle">
+        <div style="font-size:.82rem;color:var(--muted);" id="resultSummary"></div>
+        <div class="view-toggle-btns">
+          <button class="vt-btn active" id="vtCard" onclick="setViewMode('card')">🗂️ 卡片模式</button>
+          <button class="vt-btn" id="vtImg" onclick="setViewMode('image')">🖼️ 圖片模式</button>
+        </div>
+      </div>
+
+      <!-- 主體：側欄 + 網格 -->
+      <div class="pub-layout">
+        <!-- 月份側欄 -->
+        <div class="sidebar">
+          <div class="sidebar-title">📅 月份</div>
+          <div id="monthSidebar"></div>
+        </div>
+        <!-- 物品網格 -->
+        <div class="pub-main">
+          <div class="grid" id="pubGrid">
+            <div class="skeleton"></div><div class="skeleton"></div>
+            <div class="skeleton"></div><div class="skeleton"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -727,21 +786,67 @@ window.toggleClaimed = async (id,cur) => {
 
 // ── Render public ─────────────────────────────────────────────────
 function renderPublic() {
-  const avail    = items.filter(i=>i.status==='待認領');
-  const filtered = filter==='全部'?avail:avail.filter(i=>i.category===filter);
+  const avail = items.filter(i=>i.status==='待認領');
+
+  // Build month sidebar
+  buildMonthSidebar(avail);
+
+  // Apply category + month filters
+  let filtered = filter==='全部' ? avail : avail.filter(i=>i.category===filter);
+  if (monthFilter !== '全部') filtered = filtered.filter(i=>i.foundDate && i.foundDate.slice(0,7)===monthFilter);
+
   document.getElementById('pubCount').textContent = `${filtered.length} 件`;
+
+  // Result summary
+  const summary = document.getElementById('resultSummary');
+  if (summary) {
+    const parts = [];
+    if (filter !== '全部') parts.push(filter);
+    if (monthFilter !== '全部') parts.push(monthFilter.slice(5)+'月');
+    summary.textContent = parts.length ? `篩選：${parts.join(' · ')} — ${filtered.length} 件` : `共 ${filtered.length} 件`;
+  }
+
   const g = document.getElementById('pubGrid');
-  if (!filtered.length) { g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><p>目前沒有${filter==='全部'?'':' '+filter}類失物</p></div>`; return; }
-  g.innerHTML='';
+  if (!filtered.length) {
+    g.className = 'grid';
+    g.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><p>找不到符合條件的失物</p></div>`;
+    return;
+  }
+
+  const placeholder = `<div class="img-no-photo"><svg width="48" height="48" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg></div>`;
+
+  // ── 圖片模式 ──────────────────────────────────────────────────
+  if (viewMode === 'image') {
+    g.className = 'grid-img';
+    g.innerHTML = '';
+    filtered.forEach((item,i) => {
+      const c = document.createElement('div');
+      c.className = 'card-img-only' + (loggedIn?' admin-mode':'');
+      c.style.animationDelay = `${i*.04}s`;
+      const editBtn  = loggedIn ? `<button class="admin-edit-img" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
+      const claimBtn = loggedIn ? `<button class="claim-overlay" onclick="event.stopPropagation();toggleClaimed('${item.id}','待認領')">✅ 認領</button>` : '';
+      c.innerHTML = item.imageBase64
+        ? `<img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/>`
+        : placeholder;
+      c.innerHTML += `${editBtn}${claimBtn}<div class="img-name">${esc(item.name)}</div><span class="img-cat-pill cat-${item.category}">${item.category}</span>`;
+      c.onclick = () => openModal(item);
+      g.appendChild(c);
+    });
+    return;
+  }
+
+  // ── 卡片模式（原版）─────────────────────────────────────────
+  g.className = 'grid';
+  g.innerHTML = '';
   filtered.forEach((item,i)=>{
     const img = item.imageBase64
       ? `<div class="card-img"><img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/></div>`
-      : `<div class="card-img" style="background:#F0EAE2;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg></div>`;
+      : `<div class="card-img" style="background:#F0EAE2;">${placeholder}</div>`;
     const c=document.createElement('div');
     c.className='card' + (loggedIn?' admin-mode':'');
     c.style.animationDelay=`${i*.06}s`;
     c.style.position='relative';
-    const editBtn = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
+    const editBtn  = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
     const claimBar = loggedIn ? `<button class="card-claim-bar" onclick="event.stopPropagation();toggleClaimed('${item.id}','待認領')">✅ 標記已認領</button>` : '';
     c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>${claimBar}`;
     c.onclick=()=>openModal(item); g.appendChild(c);
@@ -808,6 +913,48 @@ let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
 setToday();
+
+// ── View mode & month filter state ───────────────────────────────
+let viewMode    = 'card';   // 'card' | 'image'
+let monthFilter = '全部';   // 'YYYY-MM' or '全部'
+
+window.setViewMode = mode => {
+  viewMode = mode;
+  document.getElementById('vtCard').classList.toggle('active', mode==='card');
+  document.getElementById('vtImg').classList.toggle('active', mode==='image');
+  renderPublic();
+};
+
+window.setMonthFilter = m => {
+  monthFilter = m;
+  document.querySelectorAll('.month-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.month === m)
+  );
+  renderPublic();
+};
+
+// ── Build month sidebar from items ───────────────────────────────
+function buildMonthSidebar(avail) {
+  const sidebar = document.getElementById('monthSidebar');
+  if (!sidebar) return;
+
+  // Count per month
+  const map = {};
+  avail.forEach(i => {
+    if (!i.foundDate) return;
+    const m = i.foundDate.slice(0,7);
+    map[m] = (map[m]||0) + 1;
+  });
+  const months = Object.entries(map).sort((a,b)=>b[0].localeCompare(a[0]));
+
+  let html = `<button class="month-btn ${monthFilter==='全部'?'active':''}" data-month="全部" onclick="setMonthFilter('全部')">全部 <span class="m-count">${avail.length}</span></button>`;
+  months.forEach(([m, cnt]) => {
+    const label = m.slice(5) + '月'; // e.g. "03月"
+    html += `<button class="month-btn ${monthFilter===m?'active':''}" data-month="${m}" onclick="setMonthFilter('${m}')">${label} <span class="m-count">${cnt}</span></button>`;
+  });
+  sidebar.innerHTML = html;
+}
+
 
 // ── Tab switching ─────────────────────────────────────────────────
 let currentTab = 'avail';
