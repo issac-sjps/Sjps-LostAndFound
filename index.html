@@ -829,10 +829,13 @@ function renderPublic() {
       c.style.animationDelay = `${i*.04}s`;
       const editBtn  = loggedIn ? `<button class="admin-edit-img" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
       const claimBtn = loggedIn ? `<button class="claim-overlay" onclick="event.stopPropagation();toggleClaimed('${item.id}','待認領')">✅ 認領</button>` : '';
+      const imgOnlyNum = item.itemNumber
+        ? `<div style="position:absolute;bottom:28px;right:6px;background:rgba(0,0,0,.55);color:#fff;font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:5px;letter-spacing:.5px;pointer-events:none;">${esc(item.itemNumber)}</div>`
+        : '';
       c.innerHTML = item.imageBase64
         ? `<img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/>`
         : placeholder;
-      c.innerHTML += `${editBtn}${claimBtn}<div class="img-name">${esc(item.name)}</div><span class="img-cat-pill cat-${item.category}">${item.category}</span>`;
+      c.innerHTML += `${editBtn}${claimBtn}${imgOnlyNum}<div class="img-name">${esc(item.name)}</div><span class="img-cat-pill cat-${item.category}">${item.category}</span>`;
       c.onclick = () => openModal(item);
       g.appendChild(c);
     });
@@ -843,16 +846,20 @@ function renderPublic() {
   g.className = 'grid';
   g.innerHTML = '';
   filtered.forEach((item,i)=>{
-    const img = item.imageBase64
-      ? `<div class="card-img"><img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/></div>`
-      : `<div class="card-img" style="background:#F0EAE2;">${placeholder}</div>`;
+    const numBadge = item.itemNumber
+      ? `<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.55);color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:.5px;pointer-events:none;">${esc(item.itemNumber)}</div>`
+      : '';
+    const imgWrap = item.imageBase64
+      ? `<div class="card-img" style="position:relative;overflow:hidden;"><img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/>${numBadge}</div>`
+      : `<div class="card-img" style="background:#F0EAE2;position:relative;">${placeholder}${numBadge}</div>`;
+    const img = imgWrap;
     const c=document.createElement('div');
     c.className='card' + (loggedIn?' admin-mode':'');
     c.style.animationDelay=`${i*.06}s`;
     c.style.position='relative';
     const editBtn  = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
     const claimBar = loggedIn ? `<button class="card-claim-bar" onclick="event.stopPropagation();toggleClaimed('${item.id}','待認領')">✅ 標記已認領</button>` : '';
-    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div>${item.itemNumber?`<div class="card-num"># ${esc(item.itemNumber)}</div>`:''}</div>${claimBar}`;
+    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>${claimBar}`;
     c.onclick=()=>openModal(item); g.appendChild(c);
   });
 }
@@ -997,7 +1004,10 @@ function buildMonthSidebar(avail) {
 
   let html = `<button class="month-btn ${monthFilter==='全部'?'active':''}" data-month="全部" onclick="setMonthFilter('全部')">全部 <span class="m-count">${avail.length}</span></button>`;
   months.forEach(([m, cnt]) => {
-    const label = m.slice(5) + '月'; // e.g. "03月"
+    // m = "2026-03"，轉成民國年月 e.g. "11503月"
+    const year  = parseInt(m.slice(0,4)) - 1911;
+    const month = parseInt(m.slice(5,7));
+    const label = `${year}${String(month).padStart(2,'0')}月`;
     html += `<button class="month-btn ${monthFilter===m?'active':''}" data-month="${m}" onclick="setMonthFilter('${m}')">${label} <span class="m-count">${cnt}</span></button>`;
   });
   sidebar.innerHTML = html;
