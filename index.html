@@ -61,7 +61,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .cat-文具{background:#FFF3CD;color:#B8860B;}.cat-衣物{background:#D1ECF1;color:#0C6C78;}
 .cat-水壺{background:#D4EDDA;color:#155724;}.cat-書包{background:#F8D7DA;color:#721C24;}
 .cat-3C{background:#E2D9F3;color:#4B2C82;}.cat-其他{background:#E8E0D8;color:#5A5A5A;}
-.cat-餐具{background:#FFE8CC;color:#A0522D;}
+.cat-餐具{background:#FFE8CC;color:#A0522D;}.cat-雨傘{background:#D6EAF8;color:#1A5276;}.cat-運動{background:#D5F5E3;color:#1E8449;}
 .skeleton{background:linear-gradient(90deg,#F0EAE2 25%,#FFE8D5 50%,#F0EAE2 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--radius);aspect-ratio:1/1;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 /* MODAL */
@@ -259,6 +259,8 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
         <button class="filter-btn" onclick="setFilter('書包')">🎒 書包</button>
         <button class="filter-btn" onclick="setFilter('3C')">📱 3C</button>
         <button class="filter-btn" onclick="setFilter('餐具')">🥄 餐具</button>
+        <button class="filter-btn" onclick="setFilter('雨傘')">☂️ 雨傘</button>
+        <button class="filter-btn" onclick="setFilter('運動')">⚽ 運動</button>
         <button class="filter-btn" onclick="setFilter('其他')">📦 其他</button>
       </div>
       <div class="grid" id="pubGrid">
@@ -429,7 +431,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
         <div class="fg"><label>類別 *</label>
           <select id="qaCat"><option value="">選擇類別</option>
             <option>文具</option><option>衣物</option><option>水壺</option>
-            <option>書包</option><option>3C</option><option>餐具</option><option>其他</option>
+            <option>書包</option><option>3C</option><option>餐具</option><option>雨傘</option><option>運動</option><option>其他</option>
           </select>
         </div>
         <div class="fg"><label>拾獲日期 *</label><input type="date" id="qaDate"/></div>
@@ -734,7 +736,7 @@ function renderPublic() {
   filtered.forEach((item,i)=>{
     const img = item.imageBase64
       ? `<div class="card-img"><img src="${item.imageBase64}" loading="lazy" alt="${esc(item.name)}"/></div>`
-      : `<div class="card-img" style="background:#F0EAE2;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg></div>\`;
+      : `<div class="card-img" style="background:#F0EAE2;"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg></div>`;
     const c=document.createElement('div');
     c.className='card' + (loggedIn?' admin-mode':'');
     c.style.animationDelay=`${i*.06}s`;
@@ -785,7 +787,7 @@ function renderAdmin() {
 window.openModal = item => {
   document.getElementById('mImg').innerHTML = item.imageBase64
     ? `<img src="${item.imageBase64}" alt="${esc(item.name)}"/>`
-    : `<svg width="80" height="80" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg>\`;
+    : `<svg width="80" height="80" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#E8DDD3"/><path d="M14 32l7-9 5 6 3-4 5 7H14z" fill="#C4B5A8"/><circle cx="32" cy="18" r="4" fill="#C4B5A8"/></svg>`;
   document.getElementById('mCat').innerHTML  = `<span class="card-cat cat-${item.category}">${item.category}</span>`;
   document.getElementById('mName').textContent = item.name;
   document.getElementById('mInfo').innerHTML = `
