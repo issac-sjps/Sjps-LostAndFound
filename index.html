@@ -594,7 +594,6 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 function setToday(){ document.getElementById('fDate').value=new Date().toISOString().split('T')[0]; }
 function fmtDate(d){ if(!d)return''; const dt=new Date(d+'T00:00:00'); return `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日`; }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function b64SizeKB(b64){ return Math.round((b64.length*0.75)/1024); }
 let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
