@@ -244,6 +244,11 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
   .grid-img{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));}
 }
 
+.item-num{font-size:.7rem;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:4px;}
+.card-num{font-size:.68rem;color:var(--muted);font-weight:700;margin-top:2px;}
+.num-badge{display:inline-block;background:#F0EAE2;color:#888;border-radius:6px;padding:1px 7px;font-size:.68rem;font-weight:700;letter-spacing:.5px;margin-bottom:4px;}
+.add-limit-bar{background:#FFF3CD;border:2px solid var(--accent);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:none;font-size:.88rem;color:#856404;font-weight:700;}
+
 </style>
 </head>
 <body>
@@ -383,6 +388,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 
     <!-- ADD FORM -->
     <div class="form-card">
+      <div class="add-limit-bar" id="addLimitBar">🚫 今日新增已達 100 件上限，請明日再新增。</div>
       <h3>➕ 新增失物</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;">
         <!-- Image -->
@@ -434,7 +440,7 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       <h3>📋 所有失物（即時同步）</h3>
       <div style="overflow-x:auto;">
         <table class="admin-table">
-          <thead><tr><th>物品</th><th>類別</th><th>日期</th><th>狀態</th><th>操作</th></tr></thead>
+          <thead><tr><th>物品</th><th>類別</th><th>編號</th><th>日期</th><th>狀態</th><th>操作</th></tr></thead>
           <tbody id="adminBody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">載入中…</td></tr></tbody>
         </table>
       </div>
@@ -599,6 +605,7 @@ onSnapshot(q,
     renderPublic();
     renderClaimed();
     renderStats();
+    checkDailyLimit();
     if (loggedIn) renderAdmin();
   },
   e => { setFbSt('err'); console.error(e); toast('⚠️ Firebase 連線問題','ng'); }
@@ -735,30 +742,27 @@ uz.addEventListener('drop', e => {
 
 // ── Add item ──────────────────────────────────────────────────────
 window.addItem = async () => {
+  if (getTodayCount() >= 100) { toast('🚫 今日已達 100 件上限','ng'); return; }
   const name = document.getElementById('fName').value.trim();
   const cat  = document.getElementById('fCat').value;
   const date = document.getElementById('fDate').value;
   const loc  = document.getElementById('fLoc').value.trim();
   if (!name||!cat||!date||!loc) { toast('⚠️ 請填必填欄位','ng'); return; }
-
-  // 檢查 base64 大小（Firestore 單文件上限 ~1MB）
-  if (imgB64 && b64SizeKB(imgB64) > 900) {
-    toast('⚠️ 圖片壓縮後仍過大，請換一張','ng'); return;
-  }
-
+  if (imgB64 && b64SizeKB(imgB64) > 900) { toast('⚠️ 圖片壓縮後仍過大，請換一張','ng'); return; }
   const btn = document.getElementById('addBtn');
   btn.textContent='儲存中…'; btn.disabled=true;
   try {
+    const itemNumber = getNextItemNumber();
     await addDoc(collection(db,'items'), {
-      name, category:cat,
-      emoji: '',
+      name, category:cat, emoji:'',
       foundDate:date, foundLocation:loc,
       description: document.getElementById('fDesc').value.trim(),
-      imageBase64: imgB64,   // 直接存入 Firestore，不需要 Storage！
+      imageBase64: imgB64,
+      itemNumber,
       status:'待認領',
       createdAt:serverTimestamp()
     });
-    clearForm(); toast('✅ 已儲存！','ok');
+    clearForm(); toast(`✅ 已儲存！編號 ${itemNumber}`,'ok');
   } catch(e) {
     console.error(e);
     toast('❌ 失敗：'+e.message,'ng');
@@ -848,7 +852,7 @@ function renderPublic() {
     c.style.position='relative';
     const editBtn  = loggedIn ? `<button class="card-edit-btn" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️</button>` : '';
     const claimBar = loggedIn ? `<button class="card-claim-bar" onclick="event.stopPropagation();toggleClaimed('${item.id}','待認領')">✅ 標記已認領</button>` : '';
-    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>${claimBar}`;
+    c.innerHTML=`${editBtn}${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div>${item.itemNumber?`<div class="card-num"># ${esc(item.itemNumber)}</div>`:''}</div>${claimBar}`;
     c.onclick=()=>openModal(item); g.appendChild(c);
   });
 }
@@ -878,6 +882,7 @@ function renderAdmin() {
         <div><div class="aname">${esc(item.name)}</div><div class="aloc">📍 ${esc(item.foundLocation)}</div></div>
       </div></td>
       <td><span class="card-cat cat-${item.category}">${item.category}</span></td>
+      <td><div class="aname">${item.itemNumber||'—'}</div></td>
       <td>${fmtDate(item.foundDate)}</td>
       <td><span class="badge ${cl?'claimed':'avail'}">${item.status}</span></td>
       <td><div class="action-btns">
@@ -896,6 +901,7 @@ window.openModal = item => {
   document.getElementById('mCat').innerHTML  = `<span class="card-cat cat-${item.category}">${item.category}</span>`;
   document.getElementById('mName').textContent = item.name;
   document.getElementById('mInfo').innerHTML = `
+    ${item.itemNumber?`<div class="modal-row"><span class="modal-row-icon">🔢</span><span class="modal-row-label">物品編號</span><span style="font-weight:700;letter-spacing:1px;">${esc(item.itemNumber)}</span></div>`:''}
     <div class="modal-row"><span class="modal-row-icon">📅</span><span class="modal-row-label">拾獲日期</span><span>${fmtDate(item.foundDate)}</span></div>
     <div class="modal-row"><span class="modal-row-icon">📍</span><span class="modal-row-label">拾獲地點</span><span>${esc(item.foundLocation)}</span></div>
     ${item.description?`<div class="modal-row"><span class="modal-row-icon">📝</span><span class="modal-row-label">物品描述</span><span>${esc(item.description)}</span></div>`:''}`;
@@ -913,6 +919,48 @@ let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
 setToday();
+
+// ── 編號工具 ──────────────────────────────────────────────────────
+// 民國年格式：西元年 - 1911
+function todayPrefix() {
+  const now = new Date();
+  const roc  = now.getFullYear() - 1911;
+  const mm   = String(now.getMonth()+1).padStart(2,'0');
+  const dd   = String(now.getDate()).padStart(2,'0');
+  return `${roc}${mm}${dd}`; // e.g. "1150320"
+}
+
+function getNextItemNumber() {
+  const prefix = todayPrefix();
+  // 找今天所有 items 的最大流水號
+  const todayItems = items.filter(i => i.itemNumber && i.itemNumber.startsWith(prefix + '-'));
+  if (!todayItems.length) return `${prefix}-001`;
+  const nums = todayItems.map(i => parseInt(i.itemNumber.split('-')[1]) || 0);
+  const next = Math.max(...nums) + 1;
+  return `${prefix}-${String(next).padStart(3,'0')}`;
+}
+
+function getTodayCount() {
+  const prefix = todayPrefix();
+  return items.filter(i => i.itemNumber && i.itemNumber.startsWith(prefix + '-')).length;
+}
+
+function checkDailyLimit() {
+  const count = getTodayCount();
+  const bar = document.getElementById('addLimitBar');
+  const addBtn = document.getElementById('addBtn');
+  const qaBtn  = document.getElementById('qaBtn');
+  if (count >= 100) {
+    if (bar) bar.style.display = 'block';
+    if (addBtn) { addBtn.disabled = true; addBtn.textContent = '🚫 今日已達上限'; }
+    if (qaBtn)  { qaBtn.disabled  = true; qaBtn.textContent  = '🚫 今日已達上限'; }
+  } else {
+    if (bar) bar.style.display = 'none';
+    if (addBtn) { addBtn.disabled = false; addBtn.textContent = '💾 儲存'; }
+    if (qaBtn)  { qaBtn.disabled  = false; qaBtn.textContent  = '💾 儲存'; }
+  }
+}
+
 
 // ── View mode & month filter state ───────────────────────────────
 let viewMode    = 'card';   // 'card' | 'image'
@@ -1115,6 +1163,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 });
 window.saveQuickAdd = async () => {
+  if (getTodayCount() >= 100) { toast('🚫 今日已達 100 件上限','ng'); return; }
   const name = document.getElementById('qaName').value.trim();
   const cat  = document.getElementById('qaCat').value;
   const date = document.getElementById('qaDate').value;
@@ -1123,13 +1172,15 @@ window.saveQuickAdd = async () => {
   const btn = document.getElementById('qaBtn');
   btn.textContent='儲存中…'; btn.disabled=true;
   try {
+    const itemNumber = getNextItemNumber();
     await addDoc(collection(db,'items'),{
       name, category:cat, emoji:'',
       foundDate:date, foundLocation:loc,
       description:document.getElementById('qaDesc').value.trim(),
-      imageBase64:qaImgB64, status:'待認領', createdAt:serverTimestamp()
+      imageBase64:qaImgB64, itemNumber,
+      status:'待認領', createdAt:serverTimestamp()
     });
-    closeQuickAdd(); toast('✅ 已新增！','ok');
+    closeQuickAdd(); toast(`✅ 已新增！編號 ${itemNumber}`,'ok');
   } catch(e){ toast('❌ 失敗：'+e.message,'ng'); }
   finally { btn.textContent='💾 儲存'; btn.disabled=false; }
 };
