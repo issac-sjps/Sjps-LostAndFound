@@ -216,7 +216,7 @@ function loadScript(src) {
 const initFirebase = async () => {
   try {
     const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js');
-    const { getFirestore, collection, query, where, orderBy, limit, onSnapshot } =
+    const { getFirestore, collection, query, orderBy, onSnapshot } =
       await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js');
 
     // 避免重複初始化
@@ -224,16 +224,19 @@ const initFirebase = async () => {
     const app  = apps.length ? apps[0] : initializeApp(FB);
     const db   = getFirestore(app);
 
+    // 只用 orderBy，不加 where，不需要複合索引
+    // 過濾「待認領」和限制筆數在前端做
     const q = query(
       collection(db, 'items'),
-      where('status', '==', '待認領'),
-      orderBy('createdAt', 'desc'),
-      limit(CONFIG.maxItems)
+      orderBy('createdAt', 'desc')
     );
 
     onSnapshot(q,
       snap => {
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const items = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(i => i.status === '待認領')
+          .slice(0, CONFIG.maxItems);
         renderItems(items);
         updateBadge(items.length);
         setStatus(true, `已連線 · ${items.length} 件待認領`);
