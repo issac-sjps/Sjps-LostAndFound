@@ -369,16 +369,16 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
     <div class="tab-pane active" id="tabAvail">
       <!-- 類別篩選 -->
       <div class="filters" id="catFilters">
-        <button class="filter-btn active" onclick="setFilter('全部')">全部</button>
-        <button class="filter-btn" onclick="setFilter('文具')">✏️ 文具</button>
-        <button class="filter-btn" onclick="setFilter('衣物')">👕 衣物</button>
-        <button class="filter-btn" onclick="setFilter('水壺')">🍶 水壺</button>
-        <button class="filter-btn" onclick="setFilter('書包')">🎒 書包</button>
-        <button class="filter-btn" onclick="setFilter('3C')">📱 3C</button>
-        <button class="filter-btn" onclick="setFilter('餐具')">🥄 餐具</button>
-        <button class="filter-btn" onclick="setFilter('雨傘')">☂️ 雨傘</button>
-        <button class="filter-btn" onclick="setFilter('運動')">⚽ 運動</button>
-        <button class="filter-btn" onclick="setFilter('其他')">📦 其他</button>
+        <button class="filter-btn active" data-cat="全部" onclick="setFilter('全部')">全部</button>
+        <button class="filter-btn" data-cat="文具" onclick="setFilter('文具')">✏️ 文具</button>
+        <button class="filter-btn" data-cat="衣物" onclick="setFilter('衣物')">👕 衣物</button>
+        <button class="filter-btn" data-cat="水壺" onclick="setFilter('水壺')">🍶 水壺</button>
+        <button class="filter-btn" data-cat="書包" onclick="setFilter('書包')">🎒 書包</button>
+        <button class="filter-btn" data-cat="3C" onclick="setFilter('3C')">📱 3C</button>
+        <button class="filter-btn" data-cat="餐具" onclick="setFilter('餐具')">🥄 餐具</button>
+        <button class="filter-btn" data-cat="雨傘" onclick="setFilter('雨傘')">☂️ 雨傘</button>
+        <button class="filter-btn" data-cat="運動" onclick="setFilter('運動')">⚽ 運動</button>
+        <button class="filter-btn" data-cat="其他" onclick="setFilter('其他')">📦 其他</button>
       </div>
 
       <!-- 視圖切換列 -->
@@ -1030,8 +1030,32 @@ async function _doClaim(claimedBy) {
 }
 
 // ── Render public ─────────────────────────────────────────────────
+function updateFilterCounts(avail) {
+  // 統計每個分類的待認領數量
+  const catMap = {};
+  avail.forEach(i => { catMap[i.category] = (catMap[i.category]||0)+1; });
+  const total = avail.length;
+
+  document.querySelectorAll('#catFilters .filter-btn').forEach(btn => {
+    const cat = btn.dataset.cat;
+    if (!cat) return;
+    const cnt = cat === '全部' ? total : (catMap[cat]||0);
+    // 取出純文字（去掉舊的數量標籤）
+    const baseText = btn.textContent.replace(/\s*\(\d+\)\s*$/, '').trim();
+    // 只有數量 > 0 或是「全部」才顯示數字
+    if (cnt > 0 || cat === '全部') {
+      btn.innerHTML = `${baseText} <span style="opacity:.75;font-size:.88em;">(${cnt})</span>`;
+    } else {
+      btn.innerHTML = `${baseText} <span style="opacity:.4;font-size:.88em;">(0)</span>`;
+    }
+  });
+}
+
 function renderPublic() {
   const avail = items.filter(i=>i.status==='待認領');
+
+  // 更新篩選按鈕數量
+  updateFilterCounts(avail);
 
   // Build month sidebar
   buildMonthSidebar(avail);
