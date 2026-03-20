@@ -8,73 +8,42 @@
 <style>
 :root{
   --bg:#FFF8EF;--primary:#FF6B35;--primary-d:#E05520;--primary-light:#FF9A6C;
-  --secondary:#4ECDC4;--accent:#FFD166;--blue:#3A86FF;--green:#06D6A0;
+  --secondary:#4ECDC4;--accent:#FFD166;--green:#06D6A0;
   --red:#FF4757;--card-bg:#fff;--text:#2D2D2D;--muted:#999;
   --border:#EDE5DC;--radius:18px;--shadow:0 4px 24px rgba(0,0,0,.10);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-
-/* ── NAV BAR ── */
-.top-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;height:52px;
-  background:#fff;border-bottom:2px solid var(--border);
-  position:sticky;top:0;z-index:200;
-}
-.top-nav-logo{font-weight:900;font-size:1rem;color:var(--primary);display:flex;align-items:center;gap:8px;}
-.nav-tabs{display:flex;gap:4px;}
-.nav-tab{
-  padding:6px 18px;border-radius:100px;font-size:.85rem;font-weight:700;
-  font-family:'Noto Sans TC',sans-serif;cursor:pointer;border:none;background:none;
-  color:var(--muted);transition:all .18s;
-}
-.nav-tab.active{background:var(--primary);color:#fff;}
-.nav-tab:hover:not(.active){background:#F5EDE3;color:var(--primary);}
-.admin-link-btn{
-  font-size:.78rem;color:var(--muted);background:none;border:none;
-  cursor:pointer;font-family:'Noto Sans TC',sans-serif;
-  padding:4px 10px;border-radius:8px;transition:.15s;
-}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:200;}
+.top-nav-logo{font-weight:900;font-size:1rem;color:var(--primary);}
+.admin-link-btn{font-size:.78rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Noto Sans TC',sans-serif;padding:4px 10px;border-radius:8px;transition:.15s;}
 .admin-link-btn:hover{background:#F0EAE2;color:var(--primary);}
-
-/* ── VIEWS ── */
-.view{display:none;}
-.view.active{display:block;}
-
-/* ══════════════════════════════
-   PUBLIC VIEW
-══════════════════════════════ */
-header{
-  background:linear-gradient(135deg,var(--primary) 0%,#FF8E53 60%,var(--accent) 100%);
-  padding:0;position:relative;overflow:hidden;
-}
+.fb-status{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;padding:4px 12px;border-radius:100px;}
+.fb-status.ok{background:#D4EDDA;color:#155724;}
+.fb-status.wait{background:#FFF3CD;color:#856404;}
+.fb-status.err{background:#F8D7DA;color:#721C24;}
+.view{display:none;}.view.active{display:block;}
+header{background:linear-gradient(135deg,var(--primary) 0%,#FF8E53 60%,var(--accent) 100%);position:relative;overflow:hidden;}
 header::before{content:'';position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.10);top:-100px;right:-60px;}
 header::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-60px;left:40px;}
 .header-inner{max-width:960px;margin:0 auto;padding:36px 24px 32px;position:relative;z-index:1;display:flex;align-items:center;gap:20px;}
 .header-icon{font-size:64px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15));}
 .header-text h1{font-family:'Nunito','Noto Sans TC',sans-serif;font-size:2rem;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.15);}
 .header-text p{color:rgba(255,255,255,.90);font-size:.95rem;margin-top:4px;line-height:1.6;}
-.header-badge{display:inline-block;background:rgba(255,255,255,.25);color:#fff;border-radius:100px;padding:3px 14px;font-size:.8rem;font-weight:700;margin-top:8px;backdrop-filter:blur(4px);}
-.notice-bar{background:var(--secondary);color:#fff;text-align:center;padding:10px 16px;font-size:.92rem;font-weight:700;letter-spacing:.5px;}
-.notice-bar span{opacity:.85;font-weight:500;}
-
+.header-badge{display:inline-block;background:rgba(255,255,255,.25);color:#fff;border-radius:100px;padding:3px 14px;font-size:.8rem;font-weight:700;margin-top:8px;}
+.notice-bar{background:var(--secondary);color:#fff;text-align:center;padding:10px 16px;font-size:.92rem;font-weight:700;}
 main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .section-title{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
 .section-title h2{font-size:1.3rem;font-weight:900;}
 .count-badge{background:var(--primary);color:#fff;border-radius:100px;padding:2px 12px;font-size:.82rem;font-weight:700;}
-
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
 .filter-btn{background:#fff;border:2px solid var(--border);border-radius:100px;padding:7px 18px;font-size:.85rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .18s;color:var(--muted);}
 .filter-btn:hover{border-color:var(--primary);color:var(--primary);}
 .filter-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
-
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;}
-.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s;border:2px solid transparent;animation:fadeUp .4s ease both;}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s;border:2px solid transparent;animation:fadeUp .4s ease both;}
 .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 12px 36px rgba(0,0,0,.13);border-color:var(--primary-light);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-.card.claimed{opacity:.5;pointer-events:none;}
-
 .card-img{width:100%;aspect-ratio:1/1;overflow:hidden;background:linear-gradient(135deg,#FFF0E8,#FFDFC8);display:flex;align-items:center;justify-content:center;font-size:60px;}
 .card-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
 .card:hover .card-img img{transform:scale(1.06);}
@@ -83,22 +52,14 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .card-name{font-size:1rem;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .card-meta{font-size:.78rem;color:var(--muted);}
 .card-status{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;color:var(--green);margin-top:6px;}
-.card-status.claimed-lbl{color:var(--muted);}
-
-.cat-文具{background:#FFF3CD;color:#B8860B;}
-.cat-衣物{background:#D1ECF1;color:#0C6C78;}
-.cat-水壺{background:#D4EDDA;color:#155724;}
-.cat-書包{background:#F8D7DA;color:#721C24;}
-.cat-3C{background:#E2D9F3;color:#4B2C82;}
-.cat-其他{background:#E8E0D8;color:#5A5A5A;}
-.cat-餐具{background:#FFE8CC;color:#A0522D;}
-
 .empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
 .empty-icon{font-size:64px;margin-bottom:12px;}
-
-/* ══════════════════════════════
-   MODAL
-══════════════════════════════ */
+.cat-文具{background:#FFF3CD;color:#B8860B;}.cat-衣物{background:#D1ECF1;color:#0C6C78;}
+.cat-水壺{background:#D4EDDA;color:#155724;}.cat-書包{background:#F8D7DA;color:#721C24;}
+.cat-3C{background:#E2D9F3;color:#4B2C82;}.cat-其他{background:#E8E0D8;color:#5A5A5A;}
+.cat-餐具{background:#FFE8CC;color:#A0522D;}
+.skeleton{background:linear-gradient(90deg,#F0EAE2 25%,#FFE8D5 50%,#F0EAE2 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--radius);aspect-ratio:1/1;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 .overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.55);z-index:1000;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
 .overlay.open{display:flex;animation:fadeIn .2s ease;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
@@ -107,154 +68,96 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .modal-img{width:100%;aspect-ratio:4/3;overflow:hidden;background:#F5EFE8;border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:center;font-size:80px;}
 .modal-img img{width:100%;height:100%;object-fit:cover;}
 .modal-body{padding:24px 28px 28px;}
-.modal-name{font-size:1.6rem;font-weight:900;margin-bottom:16px;line-height:1.2;}
+.modal-name{font-size:1.6rem;font-weight:900;margin-bottom:16px;}
 .modal-info{display:grid;gap:12px;margin-bottom:20px;}
 .modal-row{display:flex;gap:12px;align-items:flex-start;font-size:.92rem;padding:10px 14px;background:#FAFAF8;border-radius:12px;}
-.modal-row-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+.modal-row-icon{font-size:1.1rem;flex-shrink:0;}
 .modal-row-label{font-weight:700;color:var(--muted);min-width:52px;}
 .pickup-box{background:linear-gradient(135deg,#FFF3E0,#FFE8CC);border:2px solid var(--accent);border-radius:16px;padding:16px 18px;margin-bottom:20px;}
-.pickup-box h3{font-size:.95rem;font-weight:800;color:var(--primary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.pickup-box h3{font-size:.95rem;font-weight:800;color:var(--primary);margin-bottom:8px;}
 .pickup-box p{font-size:.88rem;line-height:1.7;color:#5A3E28;}
 .close-x{position:absolute;top:14px;right:14px;width:36px;height:36px;background:rgba(255,255,255,.9);border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15);z-index:10;}
-.btn-primary{width:100%;background:var(--primary);color:#fff;border:none;border-radius:14px;padding:14px;font-size:1rem;font-weight:800;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:.2s;}
+.btn-primary{width:100%;background:var(--primary);color:#fff;border:none;border-radius:14px;padding:14px;font-size:1rem;font-weight:800;font-family:'Noto Sans TC',sans-serif;cursor:pointer;}
 .btn-primary:hover{background:var(--primary-d);}
-
-/* ══════════════════════════════
-   LOGIN PANEL
-══════════════════════════════ */
-#adminLoginView{
-  min-height:calc(100vh - 52px);
-  display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,#FFF8EF 0%,#FFE8D5 100%);
-}
-.login-card{background:#fff;border-radius:24px;padding:48px 40px;max-width:380px;width:100%;box-shadow:0 16px 60px rgba(0,0,0,.12);text-align:center;}
-.login-icon{font-size:52px;margin-bottom:16px;}
-.login-card h2{font-size:1.5rem;font-weight:900;margin-bottom:6px;}
-.login-card p{color:var(--muted);font-size:.88rem;margin-bottom:28px;}
-.input-group{margin-bottom:16px;text-align:left;}
-.input-group label{display:block;font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:6px;}
-.input-group input{
-  width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;
-  font-size:.95rem;font-family:'Noto Sans TC',sans-serif;outline:none;transition:.2s;
-}
-.input-group input:focus{border-color:var(--primary);}
-.login-err{color:var(--red);font-size:.82rem;margin-bottom:12px;display:none;}
-
-/* ══════════════════════════════
-   ADMIN PANEL
-══════════════════════════════ */
-#adminView{
-  max-width:960px;margin:0 auto;padding:32px 20px 80px;
-  display:none;
-}
-#adminView.active{display:block;}
-
-.admin-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:32px;flex-wrap:wrap;gap:12px;
-}
+/* ── LOGIN ── */
+#loginView{min-height:calc(100vh - 52px);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFF8EF,#FFE8D5);}
+.login-card{background:#fff;border-radius:24px;padding:48px 40px;max-width:340px;width:100%;box-shadow:0 16px 60px rgba(0,0,0,.12);text-align:center;}
+.login-card h2{font-size:1.4rem;font-weight:900;margin:14px 0 6px;}
+.login-card p{color:var(--muted);font-size:.88rem;margin-bottom:26px;}
+.login-input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:14px;font-size:1.3rem;font-family:'Noto Sans TC',sans-serif;outline:none;text-align:center;letter-spacing:6px;transition:.2s;margin-bottom:8px;}
+.login-input:focus{border-color:var(--primary);}
+.login-err{color:var(--red);font-size:.82rem;margin-bottom:10px;min-height:18px;}
+/* ── ADMIN ── */
+#adminView{max-width:960px;margin:0 auto;padding:32px 20px 80px;display:none;}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
 .admin-header h2{font-size:1.4rem;font-weight:900;}
-.admin-header-btns{display:flex;gap:10px;align-items:center;}
-
-.btn{padding:10px 22px;border-radius:12px;font-size:.88rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;border:2px solid transparent;transition:.18s;}
-.btn-orange{background:var(--primary);color:#fff;border-color:var(--primary);}
-.btn-orange:hover{background:var(--primary-d);border-color:var(--primary-d);}
-.btn-outline{background:#fff;color:var(--primary);border-color:var(--primary);}
-.btn-outline:hover{background:#FFF0E8;}
-.btn-red{background:var(--red);color:#fff;border-color:var(--red);}
-.btn-red:hover{background:#E03040;}
+.btn{padding:10px 20px;border-radius:12px;font-size:.88rem;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;border:2px solid transparent;transition:.18s;}
+.btn-orange{background:var(--primary);color:#fff;}.btn-orange:hover{background:var(--primary-d);}
+.btn-outline{background:#fff;color:var(--primary);border-color:var(--primary);}.btn-outline:hover{background:#FFF0E8;}
+.btn-red{background:var(--red);color:#fff;}
 .btn-sm{padding:6px 14px;font-size:.78rem;border-radius:8px;}
 .btn-gray{background:#F0EAE2;color:var(--text);border-color:#E0D8CE;}
-.btn-gray:hover{background:#E5DDD5;}
 .btn-green-s{background:#D4EDDA;color:#155724;border-color:#C3E6CB;}
-
-/* ── ADD FORM ── */
-.form-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:32px;border:2px solid var(--border);}
-.form-card h3{font-size:1.1rem;font-weight:900;margin-bottom:22px;display:flex;align-items:center;gap:8px;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.form-group{margin-bottom:0;}
-.form-group.full{grid-column:1/-1;}
-.form-group label{display:block;font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:6px;}
-.form-group input,.form-group select,.form-group textarea{
-  width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:12px;
-  font-size:.92rem;font-family:'Noto Sans TC',sans-serif;outline:none;transition:.2s;
-  background:#FAFAF8;color:var(--text);
-}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);background:#fff;}
-.form-group textarea{resize:vertical;min-height:80px;}
-
-/* ── IMAGE UPLOAD ZONE ── */
-.upload-zone{
-  border:3px dashed var(--border);border-radius:16px;
-  padding:32px 20px;text-align:center;cursor:pointer;
-  transition:all .2s;background:#FAFAF8;
-  position:relative;
-}
-.upload-zone.dragover{border-color:var(--primary);background:#FFF0E8;}
-.upload-zone .uz-icon{font-size:40px;margin-bottom:10px;}
-.upload-zone p{color:var(--muted);font-size:.88rem;line-height:1.6;}
+.stats-row{display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+.stat-card{background:#fff;border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);flex:1;min-width:100px;}
+.stat-card .s-num{font-size:1.8rem;font-weight:900;}
+.stat-card .s-lbl{font-size:.78rem;color:var(--muted);}
+.form-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:28px;border:2px solid var(--border);}
+.form-card h3{font-size:1.05rem;font-weight:900;margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fg label{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:2px solid var(--border);border-radius:11px;font-size:.9rem;font-family:'Noto Sans TC',sans-serif;outline:none;background:#FAFAF8;transition:.2s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--primary);background:#fff;}
+.fg textarea{resize:vertical;min-height:72px;}
+.fg.full{grid-column:1/-1;}
+.upload-zone{border:3px dashed var(--border);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;transition:.2s;background:#FAFAF8;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;}
+.upload-zone.drag{border-color:var(--primary);background:#FFF0E8;}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-zone p{color:var(--muted);font-size:.85rem;line-height:1.6;}
 .upload-zone strong{color:var(--primary);}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-
-.img-preview-box{margin-top:16px;display:none;}
-.img-preview-box img{width:100%;max-height:240px;object-fit:cover;border-radius:12px;border:2px solid var(--border);}
-.img-preview-label{font-size:.78rem;color:var(--green);font-weight:700;margin-top:6px;text-align:center;}
-.remove-img-btn{background:none;border:none;color:var(--red);font-size:.78rem;font-weight:700;cursor:pointer;margin-top:4px;font-family:'Noto Sans TC',sans-serif;display:block;width:100%;text-align:center;}
-
-/* ── ADMIN ITEM LIST ── */
+.prev-box{display:none;margin-top:12px;}
+.prev-box img{width:100%;max-height:190px;object-fit:cover;border-radius:11px;border:2px solid var(--border);}
+.prev-ok{font-size:.76rem;color:var(--green);font-weight:700;margin-top:5px;text-align:center;}
+.prev-rm{background:none;border:none;color:var(--red);font-size:.76rem;font-weight:700;cursor:pointer;font-family:'Noto Sans TC',sans-serif;width:100%;text-align:center;margin-top:3px;}
+.prog{display:none;margin-top:10px;}
+.prog-bar{background:#F0EAE2;border-radius:100px;height:7px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--primary);border-radius:100px;transition:width .3s;}
+.prog-lbl{font-size:.76rem;color:var(--muted);text-align:center;margin-top:4px;}
 .admin-table{width:100%;border-collapse:collapse;}
-.admin-table th{text-align:left;padding:10px 14px;font-size:.78rem;font-weight:700;color:var(--muted);border-bottom:2px solid var(--border);}
-.admin-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:.88rem;vertical-align:middle;}
+.admin-table th{text-align:left;padding:10px 12px;font-size:.76rem;font-weight:700;color:var(--muted);border-bottom:2px solid var(--border);}
+.admin-table td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:.86rem;vertical-align:middle;}
 .admin-table tr:last-child td{border-bottom:none;}
 .admin-table tr:hover td{background:#FAFAF8;}
-.admin-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;background:#F5EFE8;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;flex-shrink:0;}
-.admin-thumb img{width:100%;height:100%;object-fit:cover;}
-.item-info{display:flex;align-items:center;gap:12px;}
-.item-name-admin{font-weight:700;}
-.item-loc{font-size:.78rem;color:var(--muted);margin-top:2px;}
-.badge-status{display:inline-block;padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:700;}
-.badge-available{background:#D4EDDA;color:#155724;}
-.badge-claimed{background:#E8E0D8;color:var(--muted);}
+.athumb{width:50px;height:50px;border-radius:9px;background:#F5EFE8;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;}
+.athumb img{width:100%;height:100%;object-fit:cover;}
+.ainfo{display:flex;align-items:center;gap:11px;}
+.aname{font-weight:700;}.aloc{font-size:.76rem;color:var(--muted);margin-top:1px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:.74rem;font-weight:700;}
+.badge.avail{background:#D4EDDA;color:#155724;}.badge.claimed{background:#E8E0D8;color:var(--muted);}
 .action-btns{display:flex;gap:6px;flex-wrap:wrap;}
-
-.stats-row{display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
-.stat-card{background:#fff;border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);flex:1;min-width:120px;}
-.stat-card .s-num{font-size:1.8rem;font-weight:900;}
-.stat-card .s-lbl{font-size:.78rem;color:var(--muted);margin-top:2px;}
-
-.toast{
-  position:fixed;bottom:28px;right:28px;z-index:9999;
-  background:var(--text);color:#fff;padding:12px 22px;border-radius:14px;
-  font-size:.88rem;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2);
-  transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;
-}
-.toast.show{transform:translateY(0);opacity:1;}
-
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:#2D2D2D;color:#fff;padding:11px 20px;border-radius:13px;font-size:.86rem;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+.toast.on{transform:translateY(0);opacity:1;}
+.toast.ok{background:#155724;}.toast.ng{background:var(--red);}
 @media(max-width:600px){
-  .header-text h1{font-size:1.4rem;}
-  .header-icon{font-size:48px;}
-  .grid{grid-template-columns:repeat(2,1fr);gap:14px;}
+  .header-text h1{font-size:1.4rem;}.header-icon{font-size:48px;}
+  .grid{grid-template-columns:repeat(2,1fr);gap:12px;}
   .form-grid{grid-template-columns:1fr;}
   .admin-table td:nth-child(3),.admin-table th:nth-child(3){display:none;}
-  .modal-body{padding:18px 20px 22px;}
-  .modal-name{font-size:1.3rem;}
 }
 </style>
 </head>
 <body>
 
-<!-- TOP NAV -->
+<!-- NAV -->
 <nav class="top-nav">
   <div class="top-nav-logo">🏫 新莊國小 失物招領</div>
-  <div style="display:flex;align-items:center;gap:4px;">
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showView('public')">📋 失物公告</button>
-    </div>
-    <button class="admin-link-btn" onclick="showView('adminLogin')" id="adminNavBtn">管理員</button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span class="fb-status wait" id="fbSt">⏳ 連線中</span>
+    <button class="admin-link-btn" id="adminBtn" onclick="showView('login')">管理員</button>
   </div>
 </nav>
 
-<!-- ══════ PUBLIC VIEW ══════ -->
+<!-- ══ PUBLIC ══ -->
 <div id="publicView" class="view active">
   <header>
     <div class="header-inner">
@@ -262,499 +165,343 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
       <div class="header-text">
         <h1>新莊國小 失物招領</h1>
         <p>找到您的失物了嗎？請至學務處認領</p>
-        <span class="header-badge">📅 資料由學務處即時更新</span>
+        <span class="header-badge">☁️ 即時同步 · 每日更新</span>
       </div>
     </div>
   </header>
-  <div class="notice-bar">
-    📢 認領時間：週一至週五 &nbsp;｜&nbsp; <span>07:30 – 16:30</span> &nbsp;｜&nbsp; 地點：學務處（行政樓一樓）
-  </div>
-
+  <div class="notice-bar">📢 認領時間：週一至週五 07:30–16:30 ｜ 地點：學務處（行政樓一樓）</div>
   <main>
     <div class="section-title">
       <h2>目前招領物品</h2>
-      <span class="count-badge" id="pubCount">0 件</span>
+      <span class="count-badge" id="pubCount">載入中…</span>
     </div>
-    <div class="filters" id="filterBar">
-      <button class="filter-btn active" onclick="filterItems('全部')">全部</button>
-      <button class="filter-btn" onclick="filterItems('文具')">✏️ 文具</button>
-      <button class="filter-btn" onclick="filterItems('衣物')">👕 衣物</button>
-      <button class="filter-btn" onclick="filterItems('水壺')">🍶 水壺</button>
-      <button class="filter-btn" onclick="filterItems('書包')">🎒 書包</button>
-      <button class="filter-btn" onclick="filterItems('3C')">📱 3C</button>
-      <button class="filter-btn" onclick="filterItems('餐具')">🥄 餐具</button>
-      <button class="filter-btn" onclick="filterItems('其他')">📦 其他</button>
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('全部')">全部</button>
+      <button class="filter-btn" onclick="setFilter('文具')">✏️ 文具</button>
+      <button class="filter-btn" onclick="setFilter('衣物')">👕 衣物</button>
+      <button class="filter-btn" onclick="setFilter('水壺')">🍶 水壺</button>
+      <button class="filter-btn" onclick="setFilter('書包')">🎒 書包</button>
+      <button class="filter-btn" onclick="setFilter('3C')">📱 3C</button>
+      <button class="filter-btn" onclick="setFilter('餐具')">🥄 餐具</button>
+      <button class="filter-btn" onclick="setFilter('其他')">📦 其他</button>
     </div>
-    <div class="grid" id="itemGrid"></div>
+    <div class="grid" id="pubGrid">
+      <div class="skeleton"></div><div class="skeleton"></div>
+      <div class="skeleton"></div><div class="skeleton"></div>
+    </div>
   </main>
-
-  <footer style="background:#2D2D2D;color:rgba(255,255,255,.7);text-align:center;padding:28px 20px;font-size:.82rem;line-height:1.8;">
-    <p>🏫 <strong style="color:#fff;">新莊國小</strong> 學務處 失物招領系統</p>
-    <p>如有疑問請撥打學校電話或至學務處詢問</p>
+  <footer style="background:#2D2D2D;color:rgba(255,255,255,.7);text-align:center;padding:24px 20px;font-size:.82rem;line-height:1.8;">
+    <p>🏫 <strong style="color:#fff">新莊國小</strong> 學務處 失物招領系統</p>
+    <p>如有疑問請至學務處詢問</p>
   </footer>
 </div>
 
-<!-- ══════ ADMIN LOGIN VIEW ══════ -->
-<div id="adminLoginView" class="view">
-  <div class="login-card">
-    <div class="login-icon">🔐</div>
-    <h2>管理員登入</h2>
-    <p>請輸入管理員密碼以進入後台</p>
-    <div class="input-group">
-      <label>密碼</label>
-      <input type="password" id="pwInput" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()"/>
+<!-- ══ LOGIN ══ -->
+<div id="loginView" class="view">
+  <div style="min-height:calc(100vh - 52px);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFF8EF,#FFE8D5);">
+    <div class="login-card">
+      <div style="font-size:52px;">🔑</div>
+      <h2>管理員後台</h2>
+      <p>輸入管理密碼進入</p>
+      <input class="login-input" type="password" id="pwIn" placeholder="••••••••" onkeydown="if(event.key==='Enter')tryLogin()"/>
+      <p class="login-err" id="loginErr"></p>
+      <button class="btn btn-orange" style="width:100%;padding:13px;" onclick="tryLogin()">進入後台</button>
+      <button style="margin-top:10px;width:100%;background:none;border:none;color:var(--muted);font-size:.84rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;" onclick="showView('public')">← 返回公告頁</button>
     </div>
-    <p class="login-err" id="loginErr">❌ 密碼錯誤，請再試一次</p>
-    <button class="btn btn-orange" style="width:100%;padding:13px;" onclick="doLogin()">登入後台</button>
-    <button style="margin-top:12px;width:100%;background:none;border:none;color:var(--muted);font-size:.85rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif;" onclick="showView('public')">← 返回公告頁</button>
   </div>
 </div>
 
-<!-- ══════ ADMIN VIEW ══════ -->
+<!-- ══ ADMIN ══ -->
 <div id="adminView">
-  <div class="admin-header">
-    <h2>🗂️ 失物管理後台</h2>
-    <div class="admin-header-btns">
-      <button class="btn btn-outline" onclick="showView('public')">← 返回公告頁</button>
-      <button class="btn btn-red" onclick="doLogout()">登出</button>
+  <div style="max-width:960px;margin:0 auto;padding:32px 20px 80px;">
+    <div class="admin-header">
+      <h2>🗂️ 失物管理後台</h2>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" onclick="showView('public')">← 公告頁</button>
+        <button class="btn btn-red" onclick="logout()">登出</button>
+      </div>
     </div>
-  </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="s-num" id="stTotal">–</div><div class="s-lbl">📦 總件數</div></div>
+      <div class="stat-card"><div class="s-num" id="stAvail" style="color:var(--green)">–</div><div class="s-lbl">✅ 待認領</div></div>
+      <div class="stat-card"><div class="s-num" id="stClaimed" style="color:var(--muted)">–</div><div class="s-lbl">📤 已認領</div></div>
+    </div>
 
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-card"><div class="s-num" id="statTotal">0</div><div class="s-lbl">📦 總件數</div></div>
-    <div class="stat-card"><div class="s-num" id="statAvail" style="color:var(--green)">0</div><div class="s-lbl">✅ 待認領</div></div>
-    <div class="stat-card"><div class="s-num" id="statClaimed" style="color:var(--muted)">0</div><div class="s-lbl">📤 已認領</div></div>
-  </div>
-
-  <!-- ADD FORM -->
-  <div class="form-card">
-    <h3>➕ 新增失物</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
-
-      <!-- LEFT: image upload -->
-      <div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label>📸 物品照片</label>
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" accept="image/*" id="imgFileInput" onchange="handleFileSelect(event)"/>
-            <div class="uz-icon">📷</div>
-            <p><strong>點擊上傳</strong>或拖曳圖片到這裡<br><span style="font-size:.78rem;">支援 JPG、PNG、WEBP</span></p>
-          </div>
-          <div class="img-preview-box" id="imgPreviewBox">
-            <img id="imgPreview" src="" alt="預覽"/>
-            <p class="img-preview-label">✅ 圖片已載入</p>
-            <button class="remove-img-btn" onclick="removeImg()">✕ 移除圖片</button>
+    <!-- Add form -->
+    <div class="form-card">
+      <h3>➕ 新增失物</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;">
+        <div>
+          <div class="fg">
+            <label>📸 物品照片</label>
+            <div class="upload-zone" id="uz">
+              <input type="file" accept="image/*" id="imgIn" onchange="onFile(event)"/>
+              <div style="font-size:36px;margin-bottom:8px;">☁️</div>
+              <p><strong>點擊</strong>或拖曳圖片到這裡<br><span style="font-size:.76rem;">上傳至 Firebase Storage</span></p>
+            </div>
+            <div class="prev-box" id="prevBox">
+              <img id="prevImg" src="" alt=""/>
+              <p class="prev-ok">✅ 圖片已選好（儲存時上傳）</p>
+              <button class="prev-rm" onclick="rmImg()">✕ 移除</button>
+            </div>
+            <div class="prog" id="prog">
+              <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0"></div></div>
+              <p class="prog-lbl" id="progLbl">上傳中…</p>
+            </div>
           </div>
         </div>
-      </div>
-
-      <!-- RIGHT: form fields -->
-      <div>
         <div class="form-grid">
-          <div class="form-group">
-            <label>物品名稱 *</label>
-            <input type="text" id="fName" placeholder="例：藍色水壺"/>
-          </div>
-          <div class="form-group">
-            <label>類別 *</label>
-            <select id="fCat">
-              <option value="">選擇類別</option>
+          <div class="fg"><label>物品名稱 *</label><input id="fName" placeholder="例：藍色水壺"/></div>
+          <div class="fg"><label>類別 *</label>
+            <select id="fCat"><option value="">選擇類別</option>
               <option>文具</option><option>衣物</option><option>水壺</option>
               <option>書包</option><option>3C</option><option>餐具</option><option>其他</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>表情符號（備用）</label>
-            <input type="text" id="fEmoji" placeholder="例：🍶" maxlength="4"/>
-          </div>
-          <div class="form-group">
-            <label>拾獲日期 *</label>
-            <input type="date" id="fDate"/>
-          </div>
-          <div class="form-group full">
-            <label>拾獲地點 *</label>
-            <input type="text" id="fLocation" placeholder="例：操場旁走廊"/>
-          </div>
-          <div class="form-group full">
-            <label>物品描述</label>
-            <textarea id="fDesc" placeholder="顏色、特徵、尺寸…等描述"></textarea>
-          </div>
+          <div class="fg"><label>表情符號</label><input id="fEmoji" placeholder="例：🍶" maxlength="4"/></div>
+          <div class="fg"><label>拾獲日期 *</label><input type="date" id="fDate"/></div>
+          <div class="fg full"><label>拾獲地點 *</label><input id="fLoc" placeholder="例：操場旁走廊"/></div>
+          <div class="fg full"><label>物品描述</label><textarea id="fDesc" placeholder="顏色、特徵、尺寸…"></textarea></div>
         </div>
       </div>
-    </div>
-
-    <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
-      <button class="btn btn-gray" onclick="clearForm()">清除</button>
-      <button class="btn btn-orange" onclick="addItem()">➕ 新增失物</button>
-    </div>
-  </div>
-
-  <!-- ITEM LIST -->
-  <div class="form-card">
-    <h3>📋 所有失物列表</h3>
-    <div style="overflow-x:auto;">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>物品</th>
-            <th>類別</th>
-            <th>拾獲日期</th>
-            <th>狀態</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="adminTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- CHANGE PASSWORD -->
-  <div class="form-card" style="border-style:dashed;">
-    <h3>🔑 變更管理員密碼</h3>
-    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-      <div class="form-group" style="flex:1;min-width:180px;margin-bottom:0;">
-        <label>新密碼</label>
-        <input type="password" id="newPw" placeholder="輸入新密碼"/>
+      <div style="margin-top:18px;display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-gray" onclick="clearForm()">清除</button>
+        <button class="btn btn-orange" onclick="addItem()" id="addBtn">☁️ 儲存上傳</button>
       </div>
-      <button class="btn btn-outline" onclick="changePw()">儲存新密碼</button>
+    </div>
+
+    <!-- List -->
+    <div class="form-card">
+      <h3>📋 所有失物（即時同步）</h3>
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>物品</th><th>類別</th><th>日期</th><th>狀態</th><th>操作</th></tr></thead>
+          <tbody id="adminBody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">載入中…</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ══════ DETAIL MODAL ══════ -->
-<div class="overlay" id="overlay" onclick="closeModal(event)">
-  <div class="modal" id="modal">
-    <button class="close-x" onclick="closeModal(null,true)">✕</button>
-    <div class="modal-img" id="modalImg"></div>
+<!-- ══ MODAL ══ -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="close-x" onclick="closeModal()">✕</button>
+    <div class="modal-img" id="mImg"></div>
     <div class="modal-body">
-      <div id="modalCat" style="margin-bottom:10px;"></div>
-      <div class="modal-name" id="modalName"></div>
-      <div class="modal-info" id="modalInfo"></div>
+      <div id="mCat" style="margin-bottom:10px;"></div>
+      <div class="modal-name" id="mName"></div>
+      <div class="modal-info" id="mInfo"></div>
       <div class="pickup-box">
         <h3>🏫 如何認領？</h3>
         <p>請攜帶 <strong>識別證件（學生證或家長證件）</strong>，<br>
         親自前往 <strong>學務處（行政樓一樓）</strong> 說明失物特徵即可認領。<br><br>
         未於 <strong>30天內</strong> 認領之物品，將依規定處理。</p>
       </div>
-      <button class="btn-primary" onclick="closeModal(null,true)">✅ 我知道了，關閉視窗</button>
+      <button class="btn-primary" onclick="closeModal()">✅ 我知道了，關閉視窗</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-// ─── STORAGE KEY ────────────────────────────────────────────
-const ITEMS_KEY = 'xzLostItems';
-const PW_KEY    = 'xzAdminPw';
-const DEFAULT_PW = 'admin123';
+<script type="module">
+import { initializeApp }     from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc,
+         doc, query, orderBy, onSnapshot, serverTimestamp }
+                              from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, deleteObject }
+                              from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js';
 
-function loadItems() {
-  try { return JSON.parse(localStorage.getItem(ITEMS_KEY)) || []; } catch { return []; }
-}
-function saveItems(arr) {
-  localStorage.setItem(ITEMS_KEY, JSON.stringify(arr));
-}
-function getPassword() {
-  return localStorage.getItem(PW_KEY) || DEFAULT_PW;
-}
-
-// ─── IMAGE HANDLING ─────────────────────────────────────────
-let currentImgBase64 = '';
-
-function handleFileSelect(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  readImageFile(file);
-}
-
-function readImageFile(file) {
-  if (!file.type.startsWith('image/')) { showToast('⚠️ 請選擇圖片檔案'); return; }
-  if (file.size > 5 * 1024 * 1024) { showToast('⚠️ 圖片大小請勿超過 5MB'); return; }
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    currentImgBase64 = ev.target.result;
-    document.getElementById('imgPreview').src = currentImgBase64;
-    document.getElementById('imgPreviewBox').style.display = 'block';
-    document.getElementById('uploadZone').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-}
-
-function removeImg() {
-  currentImgBase64 = '';
-  document.getElementById('imgPreviewBox').style.display = 'none';
-  document.getElementById('uploadZone').style.display = 'block';
-  document.getElementById('imgFileInput').value = '';
-}
-
-// drag & drop
-const uz = document.getElementById('uploadZone');
-uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('dragover'); });
-uz.addEventListener('dragleave', () => uz.classList.remove('dragover'));
-uz.addEventListener('drop', e => {
-  e.preventDefault(); uz.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) readImageFile(file);
+const app = initializeApp({
+  apiKey:            "AIzaSyAbRPDqG92GguA05UGXE5IuDIW7b7gjN6k",
+  authDomain:        "sjps-lostandfound.firebaseapp.com",
+  projectId:         "sjps-lostandfound",
+  storageBucket:     "sjps-lostandfound.firebasestorage.app",
+  messagingSenderId: "57366181323",
+  appId:             "1:57366181323:web:30a5b6f0a59468f949324e"
 });
+const db      = getFirestore(app);
+const storage = getStorage(app);
 
-// ─── VIEWS ──────────────────────────────────────────────────
-function showView(v) {
-  document.getElementById('publicView').classList.remove('active');
-  document.getElementById('adminLoginView').classList.remove('active');
+// ──────────────────────────────────────────────────────────────────
+// 🔑 管理員密碼（純前端防護，適合低安全需求的學校場景）
+const ADMIN_PW = '073411373';
+// ──────────────────────────────────────────────────────────────────
+
+let items    = [];
+let filter   = '全部';
+let selFile  = null;
+let loggedIn = false;
+
+// Firebase 連線狀態
+function fbSt(s) {
+  const el  = document.getElementById('fbSt');
+  const map = { ok:'☁️ 已連線', wait:'⏳ 連線中', err:'❌ 連線失敗' };
+  el.className = `fb-status ${s}`;
+  el.textContent = map[s];
+}
+
+// 即時監聽 Firestore
+const q = query(collection(db,'items'), orderBy('createdAt','desc'));
+onSnapshot(q,
+  snap => {
+    fbSt('ok');
+    items = snap.docs.map(d => ({id:d.id,...d.data()}));
+    renderPublic();
+    if (loggedIn) renderAdmin();
+  },
+  e => { fbSt('err'); console.error(e); toast('⚠️ Firebase 連線問題','ng'); }
+);
+
+// ── Views ─────────────────────────────────────────────────────────
+window.showView = v => {
+  ['publicView','loginView'].forEach(id => document.getElementById(id).classList.remove('active'));
   document.getElementById('adminView').style.display = 'none';
-  document.getElementById('adminNavBtn').style.display = '';
+  document.getElementById('adminBtn').style.display = '';
+  if      (v === 'public')  document.getElementById('publicView').classList.add('active');
+  else if (v === 'login')   { document.getElementById('loginView').classList.add('active'); document.getElementById('pwIn').value=''; document.getElementById('loginErr').textContent=''; }
+  else if (v === 'admin')   { document.getElementById('adminView').style.display='block'; document.getElementById('adminBtn').style.display='none'; setToday(); renderAdmin(); }
+};
 
-  if (v === 'public') {
-    document.getElementById('publicView').classList.add('active');
-    renderPublic(currentFilter);
-  } else if (v === 'adminLogin') {
-    document.getElementById('adminLoginView').classList.add('active');
-    document.getElementById('pwInput').value = '';
-    document.getElementById('loginErr').style.display = 'none';
-  } else if (v === 'admin') {
-    document.getElementById('adminView').style.display = 'block';
-    document.getElementById('adminNavBtn').style.display = 'none';
-    renderAdmin();
-    setDefaultDate();
-  }
-}
-
-// ─── LOGIN ───────────────────────────────────────────────────
-function doLogin() {
-  const pw = document.getElementById('pwInput').value;
-  if (pw === getPassword()) {
-    document.getElementById('loginErr').style.display = 'none';
+// ── Login ─────────────────────────────────────────────────────────
+window.tryLogin = () => {
+  if (document.getElementById('pwIn').value === ADMIN_PW) {
+    loggedIn = true;
     showView('admin');
+    toast('✅ 登入成功','ok');
   } else {
-    document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('pwInput').value = '';
+    document.getElementById('loginErr').textContent = '❌ 密碼錯誤';
+    document.getElementById('pwIn').value = '';
   }
+};
+window.logout = () => { loggedIn = false; showView('public'); toast('已登出'); };
+
+// ── Image ─────────────────────────────────────────────────────────
+window.onFile = e => { const f = e.target.files[0]; if(f) setPrev(f); };
+function setPrev(f) {
+  if (!f.type.startsWith('image/')) { toast('⚠️ 請選圖片','ng'); return; }
+  if (f.size > 5*1024*1024)         { toast('⚠️ 圖片不超過 5MB','ng'); return; }
+  selFile = f;
+  const r = new FileReader();
+  r.onload = ev => { document.getElementById('prevImg').src=ev.target.result; document.getElementById('prevBox').style.display='block'; document.getElementById('uz').style.display='none'; };
+  r.readAsDataURL(f);
 }
-function doLogout() { showView('public'); }
-function changePw() {
-  const p = document.getElementById('newPw').value.trim();
-  if (!p) { showToast('⚠️ 請輸入新密碼'); return; }
-  localStorage.setItem(PW_KEY, p);
-  document.getElementById('newPw').value = '';
-  showToast('✅ 密碼已更新');
+window.rmImg = () => { selFile=null; document.getElementById('prevBox').style.display='none'; document.getElementById('uz').style.display='flex'; document.getElementById('imgIn').value=''; };
+
+const uz = document.getElementById('uz');
+uz.addEventListener('dragover',  e => { e.preventDefault(); uz.classList.add('drag'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('drag'));
+uz.addEventListener('drop',      e => { e.preventDefault(); uz.classList.remove('drag'); const f=e.dataTransfer.files[0]; if(f) setPrev(f); });
+
+async function uploadImg(file) {
+  return new Promise((res,rej) => {
+    const ext  = file.name.split('.').pop();
+    const path = `items/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const task = uploadBytesResumable(sRef(storage,path),file);
+    document.getElementById('prog').style.display = 'block';
+    task.on('state_changed',
+      s => { const p=Math.round(s.bytesTransferred/s.totalBytes*100); document.getElementById('progFill').style.width=p+'%'; document.getElementById('progLbl').textContent=`上傳中 ${p}%`; },
+      e => { document.getElementById('prog').style.display='none'; rej(e); },
+      async () => {
+        document.getElementById('progFill').style.width='100%';
+        document.getElementById('progLbl').textContent='✅ 完成！';
+        setTimeout(()=>document.getElementById('prog').style.display='none',1000);
+        res({ url: await getDownloadURL(task.snapshot.ref), path });
+      }
+    );
+  });
 }
 
-// ─── ADD ITEM ────────────────────────────────────────────────
-function setDefaultDate() {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('fDate').value = today;
-}
-
-function addItem() {
+// ── Add item ──────────────────────────────────────────────────────
+window.addItem = async () => {
   const name = document.getElementById('fName').value.trim();
   const cat  = document.getElementById('fCat').value;
-  const emoji= document.getElementById('fEmoji').value.trim() || '📦';
   const date = document.getElementById('fDate').value;
-  const loc  = document.getElementById('fLocation').value.trim();
-  const desc = document.getElementById('fDesc').value.trim();
+  const loc  = document.getElementById('fLoc').value.trim();
+  if (!name||!cat||!date||!loc) { toast('⚠️ 請填必填欄位','ng'); return; }
+  const btn = document.getElementById('addBtn');
+  btn.textContent='處理中…'; btn.disabled=true;
+  try {
+    let imageUrl='', storagePath='';
+    if (selFile) { const r=await uploadImg(selFile); imageUrl=r.url; storagePath=r.path; }
+    await addDoc(collection(db,'items'),{
+      name, category:cat,
+      emoji: document.getElementById('fEmoji').value.trim()||'📦',
+      foundDate:date, foundLocation:loc,
+      description: document.getElementById('fDesc').value.trim(),
+      imageUrl, storagePath, status:'待認領', createdAt:serverTimestamp()
+    });
+    clearForm(); toast('✅ 已儲存！','ok');
+  } catch(e) { toast('❌ 失敗：'+e.message,'ng'); }
+  finally { btn.textContent='☁️ 儲存上傳'; btn.disabled=false; }
+};
+window.clearForm = () => { ['fName','fLoc','fDesc','fEmoji'].forEach(id=>document.getElementById(id).value=''); document.getElementById('fCat').value=''; setToday(); rmImg(); };
 
-  if (!name || !cat || !date || !loc) { showToast('⚠️ 請填寫必填欄位（名稱、類別、日期、地點）'); return; }
+// ── Delete / Toggle ───────────────────────────────────────────────
+window.delItem = async (id,sp) => {
+  if (!confirm('確定刪除？')) return;
+  try { await deleteDoc(doc(db,'items',id)); if(sp){try{await deleteObject(sRef(storage,sp));}catch{}} toast('🗑️ 已刪除'); }
+  catch { toast('❌ 刪除失敗','ng'); }
+};
+window.toggleClaimed = async (id,cur) => {
+  const nxt = cur==='待認領'?'已認領':'待認領';
+  try { await updateDoc(doc(db,'items',id),{status:nxt}); toast(nxt==='已認領'?'✅ 已標記認領':'🔄 已恢復'); }
+  catch { toast('❌ 更新失敗','ng'); }
+};
 
-  const items = loadItems();
-  const newItem = {
-    id: Date.now(),
-    name, category: cat, emoji, foundDate: date,
-    foundLocation: loc, description: desc,
-    imageBase64: currentImgBase64,
-    status: '待認領',
-    createdAt: new Date().toISOString()
-  };
-  items.unshift(newItem);
-  saveItems(items);
-  clearForm();
-  renderAdmin();
-  showToast('✅ 失物已新增！');
-}
-
-function clearForm() {
-  ['fName','fCat','fEmoji','fLocation','fDesc'].forEach(id => {
-    const el = document.getElementById(id);
-    el.value = el.tagName === 'SELECT' ? '' : '';
+// ── Render public ─────────────────────────────────────────────────
+function renderPublic() {
+  const avail    = items.filter(i=>i.status==='待認領');
+  const filtered = filter==='全部'?avail:avail.filter(i=>i.category===filter);
+  document.getElementById('pubCount').textContent = `${filtered.length} 件`;
+  const g = document.getElementById('pubGrid');
+  if (!filtered.length) { g.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><p>目前沒有${filter==='全部'?'':' '+filter}類失物</p></div>`; return; }
+  g.innerHTML='';
+  filtered.forEach((item,i)=>{
+    const img = item.imageUrl?`<div class="card-img"><img src="${item.imageUrl}" loading="lazy" alt="${esc(item.name)}"/></div>`:`<div class="card-img">${item.emoji||'📦'}</div>`;
+    const c=document.createElement('div'); c.className='card'; c.style.animationDelay=`${i*.06}s`;
+    c.innerHTML=`${img}<div class="card-body"><span class="card-cat cat-${item.category}">${item.category}</span><div class="card-name">${esc(item.name)}</div><div class="card-meta">📍 ${esc(item.foundLocation)}</div><div class="card-meta">📅 ${fmtDate(item.foundDate)}</div><div class="card-status">● 可認領</div></div>`;
+    c.onclick=()=>openModal(item); g.appendChild(c);
   });
-  setDefaultDate();
-  removeImg();
 }
+window.setFilter = cat => { filter=cat; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===cat||(cat==='全部'&&b.textContent.trim()==='全部'))); renderPublic(); };
 
-// ─── DELETE / TOGGLE ─────────────────────────────────────────
-function deleteItem(id) {
-  if (!confirm('確定要刪除這筆失物嗎？')) return;
-  const items = loadItems().filter(i => i.id !== id);
-  saveItems(items);
-  renderAdmin();
-  showToast('🗑️ 已刪除');
-}
-
-function toggleClaimed(id) {
-  const items = loadItems();
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  item.status = item.status === '待認領' ? '已認領' : '待認領';
-  saveItems(items);
-  renderAdmin();
-  showToast(item.status === '已認領' ? '✅ 已標記為已認領' : '🔄 已恢復為待認領');
-}
-
-// ─── ADMIN RENDER ─────────────────────────────────────────────
+// ── Render admin ──────────────────────────────────────────────────
 function renderAdmin() {
-  const items = loadItems();
-  const avail = items.filter(i => i.status === '待認領').length;
-  document.getElementById('statTotal').textContent = items.length;
-  document.getElementById('statAvail').textContent = avail;
-  document.getElementById('statClaimed').textContent = items.length - avail;
-
-  const tbody = document.getElementById('adminTableBody');
-  if (items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:40px;">目前沒有失物資料</td></tr>';
-    return;
-  }
-  tbody.innerHTML = items.map(item => {
-    const thumb = item.imageBase64
-      ? `<div class="admin-thumb"><img src="${item.imageBase64}" alt=""/></div>`
-      : `<div class="admin-thumb">${item.emoji}</div>`;
-    const claimed = item.status === '已認領';
-    return `
-      <tr>
-        <td>
-          <div class="item-info">
-            ${thumb}
-            <div>
-              <div class="item-name-admin">${escHtml(item.name)}</div>
-              <div class="item-loc">📍 ${escHtml(item.foundLocation)}</div>
-            </div>
-          </div>
-        </td>
-        <td><span class="card-cat cat-${item.category}">${item.category}</span></td>
-        <td>${formatDate(item.foundDate)}</td>
-        <td><span class="badge-status ${claimed?'badge-claimed':'badge-available'}">${item.status}</span></td>
-        <td>
-          <div class="action-btns">
-            <button class="btn btn-sm ${claimed?'btn-gray':'btn-green-s'}" onclick="toggleClaimed(${item.id})">
-              ${claimed?'↩ 恢復':'✅ 認領'}
-            </button>
-            <button class="btn btn-sm btn-red" onclick="deleteItem(${item.id})">🗑️</button>
-          </div>
-        </td>
-      </tr>`;
+  const a=items.filter(i=>i.status==='待認領').length;
+  document.getElementById('stTotal').textContent=items.length;
+  document.getElementById('stAvail').textContent=a;
+  document.getElementById('stClaimed').textContent=items.length-a;
+  const tb=document.getElementById('adminBody');
+  if (!items.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">目前沒有資料</td></tr>';return;}
+  tb.innerHTML=items.map(item=>{
+    const cl=item.status==='已認領';
+    const sp=item.storagePath?`'${item.storagePath}'`:"''";
+    return `<tr><td><div class="ainfo"><div class="athumb">${item.imageUrl?`<img src="${item.imageUrl}" loading="lazy"/>`:(item.emoji||'📦')}</div><div><div class="aname">${esc(item.name)}</div><div class="aloc">📍 ${esc(item.foundLocation)}</div></div></div></td><td><span class="card-cat cat-${item.category}">${item.category}</span></td><td>${fmtDate(item.foundDate)}</td><td><span class="badge ${cl?'claimed':'avail'}">${item.status}</span></td><td><div class="action-btns"><button class="btn btn-sm ${cl?'btn-gray':'btn-green-s'}" onclick="toggleClaimed('${item.id}','${item.status}')">${cl?'↩ 恢復':'✅ 認領'}</button><button class="btn btn-sm btn-red" onclick="delItem('${item.id}',${sp})">🗑️</button></div></td></tr>`;
   }).join('');
 }
 
-// ─── PUBLIC RENDER ────────────────────────────────────────────
-let currentFilter = '全部';
-
-function renderPublic(filter) {
-  currentFilter = filter;
-  const all = loadItems();
-  const available = all.filter(i => i.status === '待認領');
-  const filtered = filter === '全部' ? available : available.filter(i => i.category === filter);
-
-  document.getElementById('pubCount').textContent = `${filtered.length} 件`;
-
-  const grid = document.getElementById('itemGrid');
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><p>目前沒有${filter === '全部'?'':' '+filter}類的失物</p></div>`;
-    return;
-  }
-
-  grid.innerHTML = '';
-  filtered.forEach((item, i) => {
-    const imgHtml = item.imageBase64
-      ? `<div class="card-img"><img src="${item.imageBase64}" alt="${escHtml(item.name)}"/></div>`
-      : `<div class="card-img">${item.emoji || '📦'}</div>`;
-
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.style.animationDelay = `${i * 0.06}s`;
-    card.innerHTML = `
-      ${imgHtml}
-      <div class="card-body">
-        <span class="card-cat cat-${item.category}">${item.category}</span>
-        <div class="card-name">${escHtml(item.name)}</div>
-        <div class="card-meta">📍 ${escHtml(item.foundLocation)}</div>
-        <div class="card-meta">📅 ${formatDate(item.foundDate)}</div>
-        <div class="card-status">● 可認領</div>
-      </div>`;
-    card.onclick = () => openModal(item);
-    grid.appendChild(card);
-  });
-}
-
-function filterItems(cat) {
-  currentFilter = cat;
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    const label = btn.textContent.trim();
-    btn.classList.toggle('active', label === cat || (cat === '全部' && label === '全部'));
-  });
-  renderPublic(cat);
-}
-
-// ─── MODAL ───────────────────────────────────────────────────
-function openModal(item) {
-  document.getElementById('modalImg').innerHTML = item.imageBase64
-    ? `<img src="${item.imageBase64}" alt="${escHtml(item.name)}"/>`
-    : `<span style="font-size:80px">${item.emoji||'📦'}</span>`;
-
-  document.getElementById('modalCat').innerHTML =
-    `<span class="card-cat cat-${item.category}">${item.category}</span>`;
-  document.getElementById('modalName').textContent = item.name;
-  document.getElementById('modalInfo').innerHTML = `
-    <div class="modal-row">
-      <span class="modal-row-icon">📅</span>
-      <span class="modal-row-label">拾獲日期</span>
-      <span>${formatDate(item.foundDate)}</span>
-    </div>
-    <div class="modal-row">
-      <span class="modal-row-icon">📍</span>
-      <span class="modal-row-label">拾獲地點</span>
-      <span>${escHtml(item.foundLocation)}</span>
-    </div>
-    ${item.description ? `<div class="modal-row">
-      <span class="modal-row-icon">📝</span>
-      <span class="modal-row-label">物品描述</span>
-      <span>${escHtml(item.description)}</span>
-    </div>` : ''}`;
-
+// ── Modal ─────────────────────────────────────────────────────────
+window.openModal = item => {
+  document.getElementById('mImg').innerHTML=item.imageUrl?`<img src="${item.imageUrl}" alt="${esc(item.name)}"/>`:`<span style="font-size:80px">${item.emoji||'📦'}</span>`;
+  document.getElementById('mCat').innerHTML=`<span class="card-cat cat-${item.category}">${item.category}</span>`;
+  document.getElementById('mName').textContent=item.name;
+  document.getElementById('mInfo').innerHTML=`<div class="modal-row"><span class="modal-row-icon">📅</span><span class="modal-row-label">拾獲日期</span><span>${fmtDate(item.foundDate)}</span></div><div class="modal-row"><span class="modal-row-icon">📍</span><span class="modal-row-label">拾獲地點</span><span>${esc(item.foundLocation)}</span></div>${item.description?`<div class="modal-row"><span class="modal-row-icon">📝</span><span class="modal-row-label">物品描述</span><span>${esc(item.description)}</span></div>`:''}`;
   document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
+  document.body.style.overflow='hidden';
+};
+window.closeModal=()=>{ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 
-function closeModal(e, force) {
-  if (force || e?.target === document.getElementById('overlay')) {
-    document.getElementById('overlay').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(null,true); });
+// ── Utils ─────────────────────────────────────────────────────────
+function setToday(){ document.getElementById('fDate').value=new Date().toISOString().split('T')[0]; }
+function fmtDate(d){ if(!d)return''; const dt=new Date(d+'T00:00:00'); return `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日`; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let _tt;
+function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
-// ─── UTILS ───────────────────────────────────────────────────
-function formatDate(d) {
-  if (!d) return '';
-  const date = new Date(d + 'T00:00:00');
-  return `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`;
-}
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-// ─── INIT ────────────────────────────────────────────────────
-renderPublic('全部');
-setDefaultDate();
+setToday();
 </script>
 </body>
 </html>
