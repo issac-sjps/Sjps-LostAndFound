@@ -39,15 +39,15 @@ const CSS = `
   z-index: 99999;
   width: 68px; height: 68px;
   border-radius: 50%;
-  background: #4ECDC4;
+  background: #FF6B35;
   color: #fff; border: none; cursor: pointer;
-  box-shadow: 0 4px 16px rgba(78,205,196,.50);
+  box-shadow: 0 4px 16px rgba(255,107,53,.50);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 2px;
   transition: transform .2s, box-shadow .2s;
   outline: none;
 }
-#lf-fab:hover { background: #3ab8b0; box-shadow: 0 6px 24px rgba(78,205,196,.6); }
+#lf-fab:hover { background: #E05520; box-shadow: 0 6px 24px rgba(255,107,53,.6); }
 #lf-fab-icon { font-size: 26px; line-height: 1; }
 #lf-fab-text { font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; }
 #lf-badge {
@@ -69,7 +69,7 @@ const CSS = `
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,.18);
-  border: 1px solid #b2f0ec;
+  border: 1px solid #ffd0ba;
   overflow: hidden;
   display: none;
   flex-direction: column;
@@ -83,7 +83,7 @@ const CSS = `
 @media(max-width:700px){ #lf-panel{ width: calc(100vw - 16px); height: calc(75vh - 80px); } }
 
 #lf-head {
-  background: #4ECDC4;
+  background: #FF6B35;
   padding: 12px 16px;
   display: flex; align-items: center; gap: 10px; flex-shrink: 0;
 }
@@ -96,7 +96,7 @@ const CSS = `
 #lf-head-close:hover { background: rgba(255,255,255,.4); }
 
 #lf-notice {
-  background: #4ECDC4; color: #fff;
+  background: #FF6B35; color: #fff;
   font-size: .7rem; font-weight: 700;
   padding: 5px 12px; text-align: center; line-height: 1.4;
 }
@@ -168,13 +168,13 @@ root.innerHTML = `
   <span id="lf-dot-badge" style="position:fixed;bottom:calc(10% + 58px);left:calc(2.5% - 6px);width:12px;height:12px;background:#4ade80;border-radius:50%;border:2px solid #fff;z-index:99999;display:none;"></span>
   <button id="lf-fab" title="失物招領">
     <span id="lf-badge"></span>
-    <span id="lf-fab-icon">🎒</span>
+    <span id="lf-fab-icon">🔍</span>
     <span id="lf-fab-text">失物招領</span>
   </button>
 
   <div id="lf-panel">
     <div id="lf-head">
-      <div id="lf-head-av" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🎒</div>
+      <div id="lf-head-av" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔍</div>
       <div style="flex:1;">
         <div id="lf-head-title" style="font-size:14px;font-weight:600;color:#fff;">新莊國小 失物招領</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.85);margin-top:1px;"><span style="color:#4ade80;">●</span> 即時同步</div>
