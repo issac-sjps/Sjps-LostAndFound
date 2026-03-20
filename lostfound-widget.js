@@ -80,10 +80,16 @@ const CSS = `
 }
 #lf-panel.open { display: flex; transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
 
-#lf-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999999;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;}
+#lf-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:999999;align-items:center;justify-content:center;flex-direction:column;}
 #lf-lightbox.open{display:flex;}
-#lf-lightbox img{max-width:100%;max-height:88vh;border-radius:12px;object-fit:contain;pointer-events:none;}
-#lf-lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+#lf-lb-viewport{position:relative;flex:1;width:100%;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:grab;}
+#lf-lb-viewport.dragging{cursor:grabbing;}
+#lf-lb-img-wrap{transform-origin:center center;user-select:none;touch-action:none;}
+#lf-lb-img-wrap img{display:block;max-width:90vw;max-height:80vh;border-radius:8px;object-fit:contain;pointer-events:none;-webkit-user-drag:none;}
+#lf-lb-toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(255,255,255,.08);border-radius:100px;margin-bottom:12px;flex-shrink:0;}
+.lf-lb-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .15s;}
+.lf-lb-btn:hover{background:rgba(255,255,255,.3);}
+#lf-lb-zoom-label{color:rgba(255,255,255,.7);font-size:.82rem;min-width:42px;text-align:center;font-family:sans-serif;}
 @media(min-width:701px){ #lf-panel{ height: calc(75vh - 80px); } }
 @media(max-width:700px){ #lf-panel{ width: calc(100vw - 16px); height: calc(75vh - 80px); } }
 
@@ -205,8 +211,7 @@ document.body.appendChild(root);
   // Lightbox
   const lb = document.createElement('div');
   lb.id = 'lf-lightbox';
-  lb.innerHTML = '<button id="lf-lightbox-close" onclick="lfCloseLightbox()">\u2715</button><img id="lf-lightbox-img" src="" alt=""/>';
-  lb.addEventListener('click', e => { if(e.target === lb) lfCloseLightbox(); });
+  lb.innerHTML = '<div id="lf-lb-toolbar">' + '<button class="lf-lb-btn" onclick="lfZoom(-0.25)">－</button>' + '<span id="lf-lb-zoom-label">100%</span>' + '<button class="lf-lb-btn" onclick="lfZoom(0.25)">＋</button>' + '<button class="lf-lb-btn" style="font-size:.72rem;width:auto;padding:0 10px;border-radius:12px;" onclick="lfZoomReset()">重置</button>' + '<span style="width:1px;height:20px;background:rgba(255,255,255,.25);margin:0 4px;display:inline-block;"></span>' + '<button class="lf-lb-btn" onclick="lfCloseLightbox()">✕</button>' + '</div>' + '<div id="lf-lb-viewport">' + '<div id="lf-lb-img-wrap"><img id="lf-lightbox-img" src="" alt=""/></div>' + '</div>';
   document.body.appendChild(lb);
 
 // ════════════════════════════════════════════
@@ -284,18 +289,101 @@ function loadScript(src) {
 // Expose config for use in renderItems
 window.lfConfig = CONFIG;
 
+// ── Lightbox state ──────────────────────────────────────────────
+let _lbScale = 1, _lbX = 0, _lbY = 0;
+let _lbDragging = false, _lbStartX = 0, _lbStartY = 0, _lbDragX = 0, _lbDragY = 0;
+
+function _lbApply() {
+  const wrap = document.getElementById('lf-lb-img-wrap');
+  const lbl  = document.getElementById('lf-lb-zoom-label');
+  if (wrap) wrap.style.transform = `translate(${_lbX}px,${_lbY}px) scale(${_lbScale})`;
+  if (lbl)  lbl.textContent = Math.round(_lbScale * 100) + '%';
+}
+
+window.lfZoom = delta => {
+  _lbScale = Math.min(5, Math.max(0.5, _lbScale + delta));
+  _lbApply();
+};
+window.lfZoomReset = () => {
+  _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply();
+};
+
 window.lfShowImg = (src, alt) => {
-  const lb = document.getElementById('lf-lightbox');
+  const lb  = document.getElementById('lf-lightbox');
   const img = document.getElementById('lf-lightbox-img');
   img.src = src; img.alt = alt || '';
+  _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply();
   lb.classList.add('open');
-  document.body.style.overflow = 'hidden';
+  // ✅ 只隱藏 panel 底下不需要，body overflow 不動
+  // 不關閉 lf-panel！
 };
+
 window.lfCloseLightbox = () => {
   document.getElementById('lf-lightbox').classList.remove('open');
-  document.body.style.overflow = '';
+  // ✅ 不動 body.overflow，panel 保持開著
 };
-document.addEventListener('keydown', e => { if(e.key==='Escape') lfCloseLightbox(); });
+
+// Keyboard: Esc 只關 lightbox，不關 panel
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const lb = document.getElementById('lf-lightbox');
+    if (lb && lb.classList.contains('open')) {
+      lfCloseLightbox(); e.stopPropagation();
+    }
+  }
+});
+
+// Scroll to zoom on viewport
+document.addEventListener('wheel', e => {
+  const vp = document.getElementById('lf-lb-viewport');
+  if (vp && vp.contains(e.target)) {
+    e.preventDefault();
+    lfZoom(e.deltaY < 0 ? 0.15 : -0.15);
+  }
+}, { passive: false });
+
+// Click backdrop (the viewport itself) to close
+document.addEventListener('click', e => {
+  const lb = document.getElementById('lf-lightbox');
+  const vp = document.getElementById('lf-lb-viewport');
+  const wrap = document.getElementById('lf-lb-img-wrap');
+  if (lb && lb.classList.contains('open') && vp && e.target === vp) {
+    lfCloseLightbox();
+  }
+});
+
+// Drag to pan
+document.addEventListener('mousedown', e => {
+  const vp = document.getElementById('lf-lb-viewport');
+  if (!vp || !vp.contains(e.target)) return;
+  _lbDragging = true; _lbStartX = e.clientX - _lbX; _lbStartY = e.clientY - _lbY;
+  vp.classList.add('dragging');
+});
+document.addEventListener('mousemove', e => {
+  if (!_lbDragging) return;
+  _lbX = e.clientX - _lbStartX; _lbY = e.clientY - _lbStartY; _lbApply();
+});
+document.addEventListener('mouseup', () => {
+  _lbDragging = false;
+  const vp = document.getElementById('lf-lb-viewport');
+  if (vp) vp.classList.remove('dragging');
+});
+
+// Touch support
+document.addEventListener('touchstart', e => {
+  const vp = document.getElementById('lf-lb-viewport');
+  if (!vp || !vp.contains(e.target) || e.touches.length !== 1) return;
+  _lbDragging = true;
+  _lbStartX = e.touches[0].clientX - _lbX;
+  _lbStartY = e.touches[0].clientY - _lbY;
+}, { passive: true });
+document.addEventListener('touchmove', e => {
+  if (!_lbDragging || e.touches.length !== 1) return;
+  _lbX = e.touches[0].clientX - _lbStartX;
+  _lbY = e.touches[0].clientY - _lbStartY;
+  _lbApply();
+}, { passive: true });
+document.addEventListener('touchend', () => { _lbDragging = false; });
 
 const initFirebase = async () => {
   try {
