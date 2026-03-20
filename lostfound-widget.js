@@ -1,5 +1,5 @@
 /*!
- * 新莊國小 失物招領 浮動元件
+ * 失物招領 浮動元件
  * 使用方式：在任何頁面 </body> 前加入
  * <script src="lostfound-widget.js"></script>
  */
@@ -79,6 +79,11 @@ const CSS = `
   font-family: sans-serif;
 }
 #lf-panel.open { display: flex; transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+
+#lf-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999999;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;}
+#lf-lightbox.open{display:flex;}
+#lf-lightbox img{max-width:100%;max-height:88vh;border-radius:12px;object-fit:contain;pointer-events:none;}
+#lf-lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 @media(min-width:701px){ #lf-panel{ height: calc(75vh - 80px); } }
 @media(max-width:700px){ #lf-panel{ width: calc(100vw - 16px); height: calc(75vh - 80px); } }
 
@@ -101,7 +106,7 @@ const CSS = `
   padding: 5px 12px; text-align: center; line-height: 1.4;
 }
 
-#lf-list { flex: 1; overflow-y: auto; padding: 6px 0; background: #f5f4ff; }
+#lf-list { flex: 1; overflow-y: auto; padding: 8px; background: #f5f4ff; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
 #lf-list::-webkit-scrollbar { width: 4px; }
 #lf-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
 
@@ -130,9 +135,9 @@ const CSS = `
 .lf-cat-3C{background:#E2D9F3;color:#4B2C82}   .lf-cat-其他{background:#E8E0D8;color:#5A5A5A}
 .lf-cat-餐具{background:#FFE8CC;color:#A0522D}
 
-#lf-empty { text-align: center; padding: 32px 16px; color: #bbb; font-size: .82rem; }
+#lf-empty { text-align: center; padding: 32px 16px; color: #bbb; font-size: .82rem; grid-column: 1/-1; }
 #lf-empty-icon { font-size: 36px; margin-bottom: 6px; }
-#lf-loading { text-align: center; padding: 28px; color: #ccc; font-size: .82rem; }
+#lf-loading { text-align: center; padding: 28px; color: #ccc; font-size: .82rem; grid-column: 1/-1; }
 
 #lf-footer { border-top: 1px solid #F0EAE2; padding: 10px 12px 12px; }
 #lf-btn-all {
@@ -176,7 +181,7 @@ root.innerHTML = `
     <div id="lf-head">
       <div id="lf-head-av" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔍</div>
       <div style="flex:1;">
-        <div id="lf-head-title" style="font-size:14px;font-weight:600;color:#fff;">新莊國小 失物招領</div>
+        <div id="lf-head-title" style="font-size:14px;font-weight:600;color:#fff;">失物招領</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.85);margin-top:1px;"><span style="color:#4ade80;">●</span> 即時同步</div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;margin-right:6px;">
@@ -196,6 +201,13 @@ root.innerHTML = `
   </div>
 `;
 document.body.appendChild(root);
+
+  // Lightbox
+  const lb = document.createElement('div');
+  lb.id = 'lf-lightbox';
+  lb.innerHTML = '<button id="lf-lightbox-close" onclick="lfCloseLightbox()">\u2715</button><img id="lf-lightbox-img" src="" alt=""/>';
+  lb.addEventListener('click', e => { if(e.target === lb) lfCloseLightbox(); });
+  document.body.appendChild(lb);
 
 // ════════════════════════════════════════════
 // 3. Panel 開關邏輯
@@ -269,6 +281,22 @@ function loadScript(src) {
 }
 
 // 使用 ESM + dynamic import 避免全域污染
+// Expose config for use in renderItems
+window.lfConfig = CONFIG;
+
+window.lfShowImg = (src, alt) => {
+  const lb = document.getElementById('lf-lightbox');
+  const img = document.getElementById('lf-lightbox-img');
+  img.src = src; img.alt = alt || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+window.lfCloseLightbox = () => {
+  document.getElementById('lf-lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+};
+document.addEventListener('keydown', e => { if(e.key==='Escape') lfCloseLightbox(); });
+
 const initFirebase = async () => {
   try {
     const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js');
@@ -318,18 +346,21 @@ function renderItems(items) {
     el.innerHTML = '<div id="lf-empty"><div id="lf-empty-icon">🎉</div>目前沒有待領失物</div>';
     return;
   }
+  const placeholder = `<svg width="100%" height="100%" viewBox="0 0 48 48"><rect width="48" height="48" fill="#F0EAE2"/><path d="M10 32l9-12 6 8 4-5 7 9H10z" fill="#D4C8C0"/><circle cx="34" cy="16" r="5" fill="#D4C8C0"/></svg>`;
   el.innerHTML = items.map(item => {
-    const thumb = item.imageBase64
-      ? `<div class="lf-thumb"><img src="${item.imageBase64}" loading="lazy" alt=""/></div>`
-      : `<div class="lf-thumb">${item.emoji || '📦'}</div>`;
+    const hasImg = !!item.imageBase64;
+    const thumb = hasImg
+      ? `<div class="lf-thumb" onclick="event.stopPropagation();lfShowImg('${item.imageBase64.replace(/'/g,"\'")}','${esc(item.name)}')"><img src="${item.imageBase64}" loading="lazy" alt=""/></div>`
+      : `<div class="lf-thumb">${placeholder}</div>`;
     const d = item.foundDate ? new Date(item.foundDate + 'T00:00:00') : null;
-    const dateStr = d ? `${d.getMonth()+1}/${d.getDate()} 拾獲` : '';
-    return `<div class="lf-item">
+    const dateStr = d ? `${d.getMonth()+1}/${d.getDate()}` : '';
+    return `<div class="lf-item" onclick="window.open('${window.lfConfig ? window.lfConfig.fullPageUrl : ''}','_blank')">
       ${thumb}
       <div class="lf-info">
         <span class="lf-cat lf-cat-${esc(item.category)}">${esc(item.category)}</span>
         <div class="lf-name">${esc(item.name)}</div>
-        <div class="lf-meta">📍${esc(item.foundLocation)}&nbsp; ${dateStr}</div>
+        <div class="lf-meta">📍${esc(item.foundLocation)}</div>
+        <div class="lf-meta">📅${dateStr}</div>
       </div>
     </div>`;
   }).join('');
