@@ -10,7 +10,7 @@
 const CONFIG = {
   fullPageUrl:  'https://issac-sjps.github.io/Sjps-LostAndFound/',  // 完整頁面網址
   pickupInfo:   '學務處（行政樓一樓）週一至週五 07:30–16:30',
-  maxItems:     6,   // 浮動視窗最多顯示幾筆
+  maxItems:     999, // 顯示全部
   fabBottom:    '10%',
   fabLeft:      '2.5%',
 };
@@ -112,7 +112,7 @@ const CSS = `
   padding: 5px 12px; text-align: center; line-height: 1.4;
 }
 
-#lf-list { flex: 1; overflow-y: auto; padding: 8px; background: #f5f4ff; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
+#lf-list { flex: 1; overflow-y: auto; padding: 8px; background: #f5f4ff; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; scroll-behavior: smooth; }
 #lf-list::-webkit-scrollbar { width: 4px; }
 #lf-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
 
@@ -249,26 +249,31 @@ window.lfSetSize = function(size) {
 
 var _lfFullscreen = false;
 window.lfFullscreen = function() {
-  var win = document.getElementById('lf-panel');
-  var btn = document.getElementById('lf-fs-btn');
+  var win  = document.getElementById('lf-panel');
+  var btn  = document.getElementById('lf-fs-btn');
+  var list = document.getElementById('lf-list');
   _lfFullscreen = !_lfFullscreen;
   if (_lfFullscreen) {
     win.style.top    = '2%';
     win.style.left   = '2%';
     win.style.right  = '2%';
-    win.style.bottom = '18%';
+    win.style.bottom = '5%';
     win.style.width  = 'auto';
     win.style.height = 'auto';
     win.style.zIndex = '999999';
     win.style.borderRadius = '16px';
     btn.textContent = '⊡';
     btn.title = '縮小';
+    // 放大後改 4 欄，充分利用空間
+    if (list) list.style.gridTemplateColumns = 'repeat(4, 1fr)';
   } else {
     win.style.top = ''; win.style.left = ''; win.style.right = '';
     win.style.bottom = ''; win.style.width = ''; win.style.height = '';
     win.style.zIndex = ''; win.style.borderRadius = '';
     btn.textContent = '⛶';
     btn.title = '放大';
+    // 恢復 2 欄
+    if (list) list.style.gridTemplateColumns = '';
   }
 };
 
