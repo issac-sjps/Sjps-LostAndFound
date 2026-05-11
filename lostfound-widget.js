@@ -211,7 +211,7 @@ document.body.appendChild(root);
   // Lightbox
   const lb = document.createElement('div');
   lb.id = 'lf-lightbox';
-  lb.innerHTML = '<div id="lf-lb-toolbar">' + '<button class="lf-lb-btn" onclick="lfZoom(-0.25)">－</button>' + '<span id="lf-lb-zoom-label">100%</span>' + '<button class="lf-lb-btn" onclick="lfZoom(0.25)">＋</button>' + '<button class="lf-lb-btn" style="font-size:.72rem;width:auto;padding:0 10px;border-radius:12px;" onclick="lfZoomReset()">重置</button>' + '<span style="width:1px;height:20px;background:rgba(255,255,255,.25);margin:0 4px;display:inline-block;"></span>' + '<button class="lf-lb-btn" onclick="lfCloseLightbox()">✕</button>' + '</div>' + '<div id="lf-lb-viewport">' + '<div id="lf-lb-img-wrap"><img id="lf-lightbox-img" src="" alt=""/></div>' + '</div>';
+  lb.innerHTML = '<div id="lf-lb-toolbar">' + '<button class="lf-lb-btn" onclick="lfNavPrev()" title="上一件" style="font-size:1.2rem;">‹</button>' + '<span id="lf-nav-hint" style="color:rgba(255,255,255,.7);font-size:.8rem;min-width:36px;text-align:center;display:none;"></span>' + '<button class="lf-lb-btn" onclick="lfNavNext()" title="下一件" style="font-size:1.2rem;">›</button>' + '<span style="width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 4px;display:inline-block;"></span>' + '<button class="lf-lb-btn" onclick="lfZoom(-0.25)">－</button>' + '<span id="lf-lb-zoom-label">100%</span>' + '<button class="lf-lb-btn" onclick="lfZoom(0.25)">＋</button>' + '<button class="lf-lb-btn" style="font-size:.72rem;width:auto;padding:0 10px;border-radius:12px;" onclick="lfZoomReset()">重置</button>' + '<span style="width:1px;height:20px;background:rgba(255,255,255,.25);margin:0 4px;display:inline-block;"></span>' + '<button class="lf-lb-btn" onclick="lfCloseLightbox()">✕</button>' + '</div>' + '<div id="lf-lb-viewport">' + '<div id="lf-lb-img-wrap"><img id="lf-lightbox-img" src="" alt=""/></div>' + '</div>';
   document.body.appendChild(lb);
 
 // ════════════════════════════════════════════
@@ -313,28 +313,64 @@ window.lfZoomReset = () => {
   _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply();
 };
 
-window.lfShowImg = (src, alt) => {
+// widget 內部物品清單與目前 index
+var _lfItems = [];
+var _lfIdx   = 0;
+
+window.lfShowImg = (src, alt, idx) => {
   const lb  = document.getElementById('lf-lightbox');
   const img = document.getElementById('lf-lightbox-img');
   img.src = src; img.alt = alt || '';
   _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply();
   lb.classList.add('open');
-  // ✅ 只隱藏 panel 底下不需要，body overflow 不動
-  // 不關閉 lf-panel！
+  // 記錄目前 index
+  if (typeof idx === 'number') _lfIdx = idx;
+  // 更新計數提示
+  _lfUpdateNavHint();
 };
+
+function _lfUpdateNavHint() {
+  var hint = document.getElementById('lf-nav-hint');
+  if (hint && _lfItems.length > 1) {
+    hint.textContent = (_lfIdx + 1) + ' / ' + _lfItems.length;
+    hint.style.display = 'block';
+  } else if (hint) {
+    hint.style.display = 'none';
+  }
+}
+
+function _lfNavTo(dir) {
+  if (!_lfItems.length) return;
+  _lfIdx = (_lfIdx + dir + _lfItems.length) % _lfItems.length;
+  var item = _lfItems[_lfIdx];
+  var lb  = document.getElementById('lf-lightbox');
+  var img = document.getElementById('lf-lightbox-img');
+  if (img && item) {
+    img.src = item.imageBase64 || '';
+    img.alt = item.name || '';
+  }
+  _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply();
+  _lfUpdateNavHint();
+}
+
+window.lfNavPrev = function() { _lfNavTo(-1); };
+window.lfNavNext = function() { _lfNavTo(1);  };
 
 window.lfCloseLightbox = () => {
   document.getElementById('lf-lightbox').classList.remove('open');
   // ✅ 不動 body.overflow，panel 保持開著
 };
 
-// Keyboard: Esc 只關 lightbox，不關 panel
+// Keyboard: Esc 關 lightbox，左右鍵切換物品
 document.addEventListener('keydown', e => {
+  var lb = document.getElementById('lf-lightbox');
+  var lbOpen = lb && lb.classList.contains('open');
   if (e.key === 'Escape') {
-    const lb = document.getElementById('lf-lightbox');
-    if (lb && lb.classList.contains('open')) {
-      lfCloseLightbox(); e.stopPropagation();
-    }
+    if (lbOpen) { lfCloseLightbox(); e.stopPropagation(); }
+  } else if (e.key === 'ArrowLeft' && lbOpen) {
+    lfNavPrev();
+  } else if (e.key === 'ArrowRight' && lbOpen) {
+    lfNavNext();
   }
 });
 
@@ -439,11 +475,14 @@ function renderItems(items) {
     el.innerHTML = '<div id="lf-empty"><div id="lf-empty-icon">🎉</div>目前沒有待領失物</div>';
     return;
   }
+  // 記錄有圖片的物品清單，供左右切換用
+  _lfItems = items.filter(i => i.imageBase64);
   const placeholder = `<svg width="100%" height="100%" viewBox="0 0 48 48"><rect width="48" height="48" fill="#F0EAE2"/><path d="M10 32l9-12 6 8 4-5 7 9H10z" fill="#D4C8C0"/><circle cx="34" cy="16" r="5" fill="#D4C8C0"/></svg>`;
-  el.innerHTML = items.map(item => {
+  el.innerHTML = items.map((item, i) => {
     const hasImg = !!item.imageBase64;
+    const imgIdx = hasImg ? _lfItems.findIndex(x => x === item) : -1;
     const thumb = hasImg
-      ? `<div class="lf-thumb" onclick="event.stopPropagation();lfShowImg('${item.imageBase64.replace(/'/g,"\'")}','${esc(item.name)}')"><img src="${item.imageBase64}" loading="lazy" alt=""/></div>`
+      ? `<div class="lf-thumb" onclick="event.stopPropagation();lfShowImg('${item.imageBase64.replace(/'/g,"\'")}','${esc(item.name)}',${imgIdx})"><img src="${item.imageBase64}" loading="lazy" alt=""/></div>`
       : `<div class="lf-thumb">${placeholder}</div>`;
     const d = item.foundDate ? new Date(item.foundDate + 'T00:00:00') : null;
     const dateStr = d ? `${d.getMonth()+1}/${d.getDate()}` : '';
