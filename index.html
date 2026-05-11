@@ -70,10 +70,10 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 .overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.55);z-index:1000;backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
 .overlay.open{display:flex;animation:fadeIn .2s ease;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.modal{background:#fff;border-radius:24px;max-width:860px;width:100%;max-height:calc(100vh - 32px);display:flex;flex-direction:row;box-shadow:0 24px 80px rgba(0,0,0,.22);animation:popUp .28s cubic-bezier(.34,1.56,.64,1);position:relative;margin:auto;}
+.modal{background:#fff;border-radius:24px;max-width:1000px;width:100%;max-height:calc(100vh - 32px);display:flex;flex-direction:row;box-shadow:0 24px 80px rgba(0,0,0,.22);animation:popUp .28s cubic-bezier(.34,1.56,.64,1);position:relative;margin:auto;}
 @media(max-width:640px){.modal{flex-direction:column;max-width:520px;}}
 @keyframes popUp{from{transform:scale(.85) translateY(30px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
-.modal-img{width:340px;min-height:360px;flex-shrink:0;overflow:hidden;background:#1a1a1a;border-radius:24px 0 0 24px;display:flex;align-items:center;justify-content:center;font-size:80px;cursor:zoom-in;position:relative;}
+.modal-img{width:480px;min-height:400px;flex-shrink:0;overflow:hidden;background:#1a1a1a;border-radius:24px 0 0 24px;display:flex;align-items:center;justify-content:center;font-size:80px;cursor:zoom-in;position:relative;}
 .modal-img img{width:100%;height:100%;object-fit:contain;}
 .modal-img:hover img{opacity:.92;}
 .modal-img-hint{position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.45);color:#fff;font-size:.68rem;padding:3px 8px;border-radius:6px;pointer-events:none;}
@@ -322,6 +322,14 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 #mlb-img-wrap{transform-origin:center center;user-select:none;touch-action:none;}
 #mlb-img-wrap img{display:block;max-width:90vw;max-height:80vh;border-radius:8px;object-fit:contain;pointer-events:none;-webkit-user-drag:none;}
 
+
+/* Modal 左右切換 */
+.modal-nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;width:36px;height:56px;border-radius:8px;font-size:1.2rem;cursor:pointer;z-index:20;transition:background .15s;display:flex;align-items:center;justify-content:center;}
+.modal-nav-btn:hover{background:rgba(0,0,0,.65);}
+.modal-nav-prev{left:6px;}
+.modal-nav-next{right:6px;}
+#mNavHint{display:none;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);color:#fff;font-size:.72rem;padding:2px 10px;border-radius:100px;pointer-events:none;}
+
 </style>
 </head>
 <body>
@@ -526,7 +534,12 @@ main{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <button class="close-x" onclick="closeModal()">✕</button>
-    <div class="modal-img" id="mImg"></div>
+    <div style="position:relative;flex-shrink:0;display:flex;">
+      <button class="modal-nav-btn modal-nav-prev" id="mPrev" onclick="modalNav(-1)" title="上一件">‹</button>
+      <div class="modal-img" id="mImg"></div>
+      <button class="modal-nav-btn modal-nav-next" id="mNext" onclick="modalNav(1)" title="下一件">›</button>
+      <span id="mNavHint"></span>
+    </div>
     <div class="modal-body">
       <div id="mCat" style="margin-bottom:10px;"></div>
       <div class="modal-name" id="mName"></div>
@@ -1170,7 +1183,25 @@ function renderAdmin() {
 }
 
 // ── Modal ─────────────────────────────────────────────────────────
+// ── 左右切換支援 ──────────────────────────────────────────────────
+let _modalItems = [];   // 目前可見的物品清單（依篩選/月份）
+let _modalIdx   = 0;    // 目前顯示的 index
+
 window.openModal = item => {
+  // 記錄目前可見清單與 index（用於左右切換）
+  const avail = items.filter(i => i.status === '待認領');
+  let visible = filter === '全部' ? avail : avail.filter(i => i.category === filter);
+  if (monthFilter !== '全部') visible = visible.filter(i => i.foundDate && i.foundDate.slice(0,7) === monthFilter);
+  _modalItems = visible;
+  _modalIdx   = visible.findIndex(i => i.id === item.id);
+  if (_modalIdx < 0) _modalIdx = 0;
+
+  _fillModal(item);
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+function _fillModal(item) {
   const mImg = document.getElementById('mImg');
   if (item.imageBase64) {
     mImg.innerHTML = `<img src="${item.imageBase64}" alt="${esc(item.name)}"/><div class="modal-img-hint">🔍 點擊放大</div>`;
@@ -1188,11 +1219,15 @@ window.openModal = item => {
     <div class="modal-row"><span class="modal-row-icon">📅</span><span class="modal-row-label">拾獲日期</span><span>${fmtDate(item.foundDate, true)}</span></div>
     <div class="modal-row"><span class="modal-row-icon">📍</span><span class="modal-row-label">拾獲地點</span><span>${esc(item.foundLocation)}</span></div>
     ${item.description?`<div class="modal-row"><span class="modal-row-icon">📝</span><span class="modal-row-label">物品描述</span><span>${esc(item.description)}</span></div>`:''}`;
-  document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-};
+  // 更新切換提示
+  const navEl = document.getElementById('mNavHint');
+  if (navEl) {
+    navEl.textContent = _modalItems.length > 1 ? `${_modalIdx+1} / ${_modalItems.length}` : '';
+    navEl.style.display = _modalItems.length > 1 ? 'inline' : 'none';
+  }
+}
 window.closeModal=()=>{ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; };
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+// Esc handled in keyboard nav listener
 
 // ── Utils ─────────────────────────────────────────────────────────
 function setToday(){ document.getElementById('fDate').value=new Date().toISOString().split('T')[0]; }
@@ -1209,6 +1244,44 @@ let _tt;
 function toast(msg,type=''){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast '+type+' on'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),3000); }
 
 setToday();
+
+// ── Modal 左右切換 ────────────────────────────────────────────────
+window.modalNav = dir => {
+  if (!_modalItems.length) return;
+  _modalIdx = (_modalIdx + dir + _modalItems.length) % _modalItems.length;
+  _fillModal(_modalItems[_modalIdx]);
+};
+
+// 鍵盤左右鍵（含 lightbox 放大時也可用）
+document.addEventListener('keydown', e => {
+  const lbOpen = document.getElementById('main-lightbox')?.classList.contains('open');
+  const modalOpen = document.getElementById('overlay')?.classList.contains('open');
+
+  if (e.key === 'ArrowLeft') {
+    if (lbOpen) {
+      // 放大時：切換上一件並更新 lightbox 圖片
+      modalNav(-1);
+      const cur = _modalItems[_modalIdx];
+      if (cur?.imageBase64 && window.lfShowImg) lfShowImg(cur.imageBase64, cur.name);
+    } else if (modalOpen) {
+      modalNav(-1);
+    }
+  } else if (e.key === 'ArrowRight') {
+    if (lbOpen) {
+      modalNav(1);
+      const cur = _modalItems[_modalIdx];
+      if (cur?.imageBase64 && window.lfShowImg) lfShowImg(cur.imageBase64, cur.name);
+    } else if (modalOpen) {
+      modalNav(1);
+    }
+  } else if (e.key === 'Escape') {
+    if (lbOpen) { window.mlbClose && mlbClose(); }
+    else if (modalOpen) { closeModal(); }
+    else if (document.getElementById('editOverlay')?.classList.contains('open')) { closeEditModal(); }
+    else if (document.getElementById('loginOverlay')?.classList.contains('open')) { closeLoginModal(); }
+  }
+});
+
 
 // ── 主頁面 Lightbox（含放大/縮小/拖曳）────────────────────────
 let _mlbS=1, _mlbX=0, _mlbY=0, _mlbDrag=false, _mlbSX=0, _mlbSY=0;
