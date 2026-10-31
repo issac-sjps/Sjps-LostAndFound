@@ -1,4 +1,5 @@
 /*!
+ * 失物招領 浮動元件 - 2026-10-31 對比修正版
  * 失物招領 浮動元件
  * 使用方式：在任何頁面 </body> 前加入
  * <script src="lostfound-widget.js"></script>
@@ -39,20 +40,20 @@ const CSS = `
   z-index: 99999;
   width: 68px; height: 68px;
   border-radius: 50%;
-  background: #FF6B35;
+  background: #C2410C;
   color: #fff; border: none; cursor: pointer;
-  box-shadow: 0 4px 16px rgba(255,107,53,.50);
+  box-shadow: 0 4px 16px rgba(194,65,12,.50);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 2px;
   transition: transform .2s, box-shadow .2s;
   outline: none;
 }
-#lf-fab:hover { background: #E05520; box-shadow: 0 6px 24px rgba(255,107,53,.6); }
+#lf-fab:hover { background: #9A3412; box-shadow: 0 6px 24px rgba(194,65,12,.6); }
 #lf-fab-icon { font-size: 26px; line-height: 1; }
 #lf-fab-text { font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; }
 #lf-badge {
   position: absolute; top: -4px; right: -4px;
-  background: #FF4757; color: #fff; border-radius: 50%;
+  background: #C62828; color: #fff; border-radius: 50%;
   width: 22px; height: 22px; font-size: 11px; font-weight: 700;
   display: none; align-items: center; justify-content: center;
   border: 2px solid #fff; font-family: sans-serif;
@@ -94,20 +95,20 @@ const CSS = `
 @media(max-width:700px){ #lf-panel{ width: calc(100vw - 16px); height: calc(75vh - 80px); } }
 
 #lf-head {
-  background: #FF6B35;
+  background: #C2410C;
   padding: 12px 16px;
   display: flex; align-items: center; gap: 10px; flex-shrink: 0;
 }
 #lf-head-title { color: #fff; font-weight: 900; font-size: .92rem; display: flex; align-items: center; gap: 5px; }
 #lf-head-close {
-  background: rgba(255,255,255,.25); border: none; color: #fff;
+  background: rgba(0,0,0,.25); border: none; color: #fff;
   width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
   font-size: .95rem; display: flex; align-items: center; justify-content: center;
 }
-#lf-head-close:hover { background: rgba(255,255,255,.4); }
+#lf-head-close:hover { background: rgba(0,0,0,.4); }
 
 #lf-notice {
-  background: #FF6B35; color: #fff;
+  background: #C2410C; color: #fff;
   font-size: .7rem; font-weight: 700;
   padding: 5px 12px; text-align: center; line-height: 1.4;
 }
@@ -134,32 +135,32 @@ const CSS = `
   padding: 1px 6px; border-radius: 100px; margin-bottom: 2px;
 }
 .lf-name { font-size: .85rem; font-weight: 700; color: #2D2D2D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lf-meta { font-size: .7rem; color: #999; margin-top: 1px; }
+.lf-meta { font-size: .7rem; color: #595959; margin-top: 1px; }
 
-.lf-cat-文具{background:#FFF3CD;color:#B8860B} .lf-cat-衣物{background:#D1ECF1;color:#0C6C78}
+.lf-cat-文具{background:#FFF3CD;color:#6B4E00} .lf-cat-衣物{background:#D1ECF1;color:#0C6C78}
 .lf-cat-水壺{background:#D4EDDA;color:#155724} .lf-cat-書包{background:#F8D7DA;color:#721C24}
 .lf-cat-3C{background:#E2D9F3;color:#4B2C82}   .lf-cat-其他{background:#E8E0D8;color:#5A5A5A}
 .lf-cat-餐具{background:#FFE8CC;color:#A0522D}
 
-#lf-empty { text-align: center; padding: 32px 16px; color: #bbb; font-size: .82rem; grid-column: 1/-1; }
+#lf-empty { text-align: center; padding: 32px 16px; color: #595959; font-size: .82rem; grid-column: 1/-1; }
 #lf-empty-icon { font-size: 36px; margin-bottom: 6px; }
-#lf-loading { text-align: center; padding: 28px; color: #ccc; font-size: .82rem; grid-column: 1/-1; }
+#lf-loading { text-align: center; padding: 28px; color: #595959; font-size: .82rem; grid-column: 1/-1; }
 
 #lf-footer { border-top: 1px solid #F0EAE2; padding: 10px 12px 12px; }
 #lf-btn-all {
   display: block; width: 100%;
-  background: #FF6B35; color: #fff; border: none;
+  background: #C2410C; color: #fff; border: none;
   border-radius: 10px; padding: 9px;
   font-size: .82rem; font-weight: 800;
   font-family: 'Noto Sans TC','Microsoft JhengHei',sans-serif;
   cursor: pointer; text-decoration: none; text-align: center;
   transition: background .15s;
 }
-#lf-btn-all:hover { background: #E05520; color: #fff; }
+#lf-btn-all:hover { background: #9A3412; color: #fff; }
 
 #lf-st {
   display: flex; align-items: center; gap: 4px;
-  font-size: .68rem; color: #bbb; padding: 4px 12px 0;
+  font-size: .68rem; color: #595959; padding: 4px 12px 0;
   justify-content: flex-end;
 }
 #lf-dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; flex-shrink: 0; }
@@ -191,12 +192,12 @@ root.innerHTML = `
         <div style="font-size:11px;color:rgba(255,255,255,0.85);margin-top:1px;"><span style="color:#4ade80;">●</span> 即時同步</div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;margin-right:6px;">
-        <button onclick="lfSetSize(13)" style="background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:11px;font-family:sans-serif;">小</button>
-        <button onclick="lfSetSize(15)" style="background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;font-family:sans-serif;">中</button>
-        <button onclick="lfSetSize(17)" style="background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;font-family:sans-serif;">大</button>
+        <button onclick="lfSetSize(13)" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:11px;font-family:sans-serif;">小</button>
+        <button onclick="lfSetSize(15)" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;font-family:sans-serif;">中</button>
+        <button onclick="lfSetSize(17)" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;font-family:sans-serif;">大</button>
       </div>
-      <button id="lf-fs-btn" onclick="lfFullscreen()" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="放大">⛶</button>
-      <button id="lf-head-close" title="關閉" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+      <button id="lf-fs-btn" onclick="lfFullscreen()" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="放大">⛶</button>
+      <button id="lf-head-close" title="關閉" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
     </div>
     <div id="lf-notice">📍 ${CONFIG.pickupInfo}</div>
     <div id="lf-list"><div id="lf-loading">⏳ 載入中…</div></div>
