@@ -2,10 +2,6 @@
  * 失物招領 浮動元件 - 2026-10-31 對比修正版
  * 2026-11-10 人工檢測修正（GN1410200E / GN1210100E）：字級按鈕 aria-pressed、FAB aria-expanded/aria-controls、
  * 面板 role=dialog、開面板焦點移至關閉鈕、Esc 關面板並回焦點至 FAB。未改顏色、版面、Firebase。
- * 2026-11-11 人工檢測第二輪（GN1210100E 鍵盤 / GN1410200E / HM3240900C / AAA 對比）：
- *  清單項目與縮圖改為可用鍵盤操作（縮圖是 button、名稱是連結）、照片檢視 dialog 語意/焦點管理/Tab 循環、
- *  修正燈箱內點擊會關掉面板、字級對重新渲染的項目也生效且初始 aria-pressed 與實際一致、
- *  狀態文字 role=status、「查看全部失物」加（另開新視窗）、顏色直接改為 AAA（與主題 CSS 一致）。
  * 失物招領 浮動元件
  * 使用方式：在任何頁面 </body> 前加入
  * <script src="lostfound-widget.js"></script>
@@ -48,12 +44,13 @@ const CSS = `
   border-radius: 50%;
   background: #7c2d12;
   color: #fff; border: none; cursor: pointer;
-  box-shadow: 0 4px 16px rgba(194,65,12,.50);
+  box-shadow: 0 4px 16px rgba(124,45,18,.50);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 2px;
   transition: transform .2s, box-shadow .2s;
+  outline: none;
 }
-#lf-fab:hover { background: #4a1a0b; box-shadow: 0 6px 24px rgba(194,65,12,.6); }
+#lf-fab:hover { background: #4a1a0b; box-shadow: 0 6px 24px rgba(124,45,18,.6); }
 #lf-fab-icon { font-size: 26px; line-height: 1; }
 #lf-fab-text { font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; }
 #lf-badge {
@@ -114,7 +111,7 @@ const CSS = `
 
 #lf-notice {
   background: #7c2d12; color: #fff;
-  font-size: var(--lf-fs, .7rem); font-weight: 700;
+  font-size: .7rem; font-weight: 700;
   padding: 5px 12px; text-align: center; line-height: 1.4;
 }
 
@@ -134,18 +131,20 @@ const CSS = `
   display: flex; align-items: center; justify-content: center; font-size: 20px;
 }
 .lf-thumb img { width: 100%; height: 100%; object-fit: cover; }
+button.lf-thumb { border: none; padding: 0; cursor: pointer; }
 .lf-info { flex: 1; min-width: 0; }
 .lf-cat {
-  display: inline-block; font-size: var(--lf-fs, .62rem); font-weight: 700;
+  display: inline-block; font-size: .62rem; font-weight: 700;
   padding: 1px 6px; border-radius: 100px; margin-bottom: 2px;
+  color: #333333;
 }
-.lf-name { font-size: var(--lf-fs, .85rem); font-weight: 700; color: #2D2D2D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lf-meta { font-size: var(--lf-fs, .7rem); color: #4d525e; margin-top: 1px; }
+.lf-name { display: block; font-size: .85rem; font-weight: 700; color: #4d525e; text-decoration: underline; word-break: break-all; }
+.lf-meta { font-size: .7rem; color: #4d525e; margin-top: 1px; }
 
-.lf-cat-文具{background:#FFF3CD;color:#6B4E00} .lf-cat-衣物{background:#D1ECF1;color:#0C6C78}
-.lf-cat-水壺{background:#D4EDDA;color:#155724} .lf-cat-書包{background:#F8D7DA;color:#721C24}
-.lf-cat-3C{background:#E2D9F3;color:#4B2C82}   .lf-cat-其他{background:#E8E0D8;color:#5A5A5A}
-.lf-cat-餐具{background:#FFE8CC;color:#A0522D}
+.lf-cat-文具{background:#FFF3CD} .lf-cat-衣物{background:#D1ECF1}
+.lf-cat-水壺{background:#D4EDDA} .lf-cat-書包{background:#F8D7DA}
+.lf-cat-3C{background:#E2D9F3}   .lf-cat-其他{background:#E8E0D8}
+.lf-cat-餐具{background:#FFE8CC}
 
 #lf-empty { text-align: center; padding: 32px 16px; color: #4d525e; font-size: .82rem; grid-column: 1/-1; }
 #lf-empty-icon { font-size: 36px; margin-bottom: 6px; }
@@ -170,12 +169,6 @@ const CSS = `
 }
 #lf-dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; flex-shrink: 0; }
 #lf-dot.ok { background: #06D6A0; }
-
-/* 2026-11-11 鍵盤/報讀輔助 */
-#lf-widget-root .lf-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-#lf-widget-root button.lf-thumb { border: none; padding: 0; cursor: pointer; font-family: inherit; }
-.lf-item:focus-within { background: #FFF8EF; }
-.lf-cat { color: #333333 !important; }
 `;
 
 const styleEl = document.createElement('style');
@@ -188,33 +181,33 @@ document.head.appendChild(styleEl);
 const root = document.createElement('div');
 root.id = 'lf-widget-root';
 root.innerHTML = `
-  <span id="lf-dot-badge" aria-hidden="true" style="position:fixed;bottom:calc(10% + 58px);left:calc(2.5% - 6px);width:12px;height:12px;background:#4ade80;border-radius:50%;border:2px solid #fff;z-index:99999;display:none;"></span>
+  <span id="lf-dot-badge" style="position:fixed;bottom:calc(10% + 58px);left:calc(2.5% - 6px);width:12px;height:12px;background:#4ade80;border-radius:50%;border:2px solid #fff;z-index:99999;display:none;"></span>
   <button id="lf-fab" title="失物招領" aria-expanded="false" aria-controls="lf-panel">
-    <span id="lf-badge" aria-hidden="true"></span>
-    <span id="lf-fab-icon" aria-hidden="true">🔍</span>
+    <span id="lf-badge"></span>
+    <span id="lf-fab-icon">🔍</span>
     <span id="lf-fab-text">失物招領</span>
   </button>
 
   <div id="lf-panel" role="dialog" aria-label="失物招領">
     <div id="lf-head">
-      <div id="lf-head-av" aria-hidden="true" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔍</div>
+      <div id="lf-head-av" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔍</div>
       <div style="flex:1;">
         <div id="lf-head-title" style="font-size:14px;font-weight:600;color:#fff;">失物招領</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.85);margin-top:1px;"><span style="color:#4ade80;">●</span> 即時同步</div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;margin-right:6px;">
         <button onclick="lfSetSize(13)" data-lf-size="13" aria-label="字級小" aria-pressed="false" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:11px;font-family:sans-serif;">小</button>
-        <button onclick="lfSetSize(15)" data-lf-size="15" aria-label="字級中" aria-pressed="false" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;font-family:sans-serif;">中</button>
+        <button onclick="lfSetSize(15)" data-lf-size="15" aria-label="字級中" aria-pressed="true" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;font-family:sans-serif;">中</button>
         <button onclick="lfSetSize(17)" data-lf-size="17" aria-label="字級大" aria-pressed="false" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;font-family:sans-serif;">大</button>
       </div>
-      <button id="lf-fs-btn" aria-label="放大" onclick="lfFullscreen()" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="放大">⛶</button>
-      <button id="lf-head-close" aria-label="關閉失物招領" title="關閉" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+      <button id="lf-fs-btn" onclick="lfFullscreen()" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="放大" aria-label="放大視窗">⛶</button>
+      <button id="lf-head-close" title="關閉" aria-label="關閉失物招領" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
     </div>
     <div id="lf-notice">📍 ${CONFIG.pickupInfo}</div>
-    <div id="lf-list" role="region" aria-label="待認領失物清單" tabindex="0"><div id="lf-loading">⏳ 載入中…</div></div>
-    <div id="lf-st" role="status" aria-live="polite"><span id="lf-dot"></span><span id="lf-st-text">連線中</span></div>
+    <div id="lf-list"><div id="lf-loading">⏳ 載入中…</div></div>
+    <div id="lf-st"><span id="lf-dot"></span><span id="lf-st-text">連線中</span></div>
     <div id="lf-footer">
-      <a id="lf-btn-all" href="${CONFIG.fullPageUrl}" target="_blank" rel="noopener" title="查看全部失物（另開新視窗）">📋 查看全部失物（另開新視窗） →</a>
+      <a id="lf-btn-all" href="${CONFIG.fullPageUrl}" target="_blank">📋 查看全部失物（另開新視窗）→</a>
     </div>
   </div>
 `;
@@ -223,24 +216,8 @@ document.body.appendChild(root);
   // Lightbox
   const lb = document.createElement('div');
   lb.id = 'lf-lightbox';
-  lb.setAttribute('role', 'dialog');
-  lb.setAttribute('aria-modal', 'true');
-  lb.setAttribute('aria-label', '失物照片檢視');
-  lb.innerHTML = '<div id="lf-lb-toolbar">' +
-    '<button type="button" class="lf-lb-btn" onclick="lfNavPrev()" aria-label="上一件" title="上一件" style="font-size:1.2rem;">‹</button>' +
-    '<span id="lf-nav-hint" style="color:rgba(255,255,255,.7);font-size:.8rem;min-width:36px;text-align:center;display:none;"></span>' +
-    '<button type="button" class="lf-lb-btn" onclick="lfNavNext()" aria-label="下一件" title="下一件" style="font-size:1.2rem;">›</button>' +
-    '<span aria-hidden="true" style="width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 4px;display:inline-block;"></span>' +
-    '<button type="button" class="lf-lb-btn" onclick="lfZoom(-0.25)" aria-label="縮小" title="縮小">－</button>' +
-    '<span id="lf-lb-zoom-label" role="status">100%</span>' +
-    '<button type="button" class="lf-lb-btn" onclick="lfZoom(0.25)" aria-label="放大" title="放大">＋</button>' +
-    '<button type="button" class="lf-lb-btn" style="font-size:.72rem;width:auto;padding:0 10px;border-radius:12px;" onclick="lfZoomReset()" aria-label="重置縮放">重置</button>' +
-    '<span aria-hidden="true" style="width:1px;height:20px;background:rgba(255,255,255,.25);margin:0 4px;display:inline-block;"></span>' +
-    '<button type="button" class="lf-lb-btn" id="lf-lb-close" onclick="lfCloseLightbox()" aria-label="關閉照片檢視" title="關閉照片檢視">✕</button>' +
-    '</div>' +
-    '<div id="lf-lb-viewport">' +
-    '<div id="lf-lb-img-wrap"><img id="lf-lightbox-img" src="" alt=""/></div>' +
-    '</div>';
+  lb.innerHTML = '<div id="lf-lb-toolbar">' + '<button class="lf-lb-btn" onclick="lfNavPrev()" title="上一件" aria-label="上一件" style="font-size:1.2rem;">‹</button>' + '<span id="lf-nav-hint" style="color:rgba(255,255,255,.7);font-size:.8rem;min-width:36px;text-align:center;display:none;"></span>' + '<button class="lf-lb-btn" onclick="lfNavNext()" title="下一件" aria-label="下一件" style="font-size:1.2rem;">›</button>' + '<span style="width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 4px;display:inline-block;"></span>' + '<button class="lf-lb-btn" onclick="lfZoom(-0.25)" aria-label="縮小圖片">－</button>' + '<span id="lf-lb-zoom-label">100%</span>' + '<button class="lf-lb-btn" onclick="lfZoom(0.25)" aria-label="放大圖片">＋</button>' + '<button class="lf-lb-btn" style="font-size:.72rem;width:auto;padding:0 10px;border-radius:12px;" onclick="lfZoomReset()">重置</button>' + '<span style="width:1px;height:20px;background:rgba(255,255,255,.25);margin:0 4px;display:inline-block;"></span>' + '<button class="lf-lb-btn" id="lf-lb-close" onclick="lfCloseLightbox()" aria-label="關閉大圖">✕</button>' + '</div>' + '<div id="lf-lb-viewport">' + '<div id="lf-lb-img-wrap"><img id="lf-lightbox-img" src="" alt=""/></div>' + '</div>';
+  lb.setAttribute('role','dialog'); lb.setAttribute('aria-label','失物照片大圖');
   document.body.appendChild(lb);
 
 // ════════════════════════════════════════════
@@ -255,9 +232,6 @@ document.getElementById('lf-head-close').addEventListener('click', close);
 
 document.addEventListener('click', e => {
   if (!isOpen) return;
-  // 燈箱在面板之外：點燈箱內的按鈕（含鍵盤 Enter/Space）不可關掉面板
-  const lbBox = document.getElementById('lf-lightbox');
-  if (lbBox && lbBox.contains(e.target)) return;
   const panel = document.getElementById('lf-panel');
   const fab   = document.getElementById('lf-fab');
   if (!panel.contains(e.target) && !fab.contains(e.target)) close();
@@ -279,11 +253,10 @@ function close() {
 }
 
 window.lfSetSize = function(size) {
-  // 用 CSS 變數設定：之後 Firebase 重新渲染的項目也會套用同一字級
-  document.getElementById('lf-widget-root').style.setProperty('--lf-fs', size + 'px');
+  document.querySelectorAll('.lf-name,.lf-meta,.lf-cat').forEach(el => el.style.fontSize = size + 'px');
+  document.getElementById('lf-notice').style.fontSize = size + 'px';
   window._lfSize = size;
-  // GN1410200E：每次切換字級都同步更新三顆按鈕的 aria-pressed。
-  // 預設未選任何一顆（畫面是原本的 .85/.7/.62rem，與 13/15/17px 三級都不完全相同），所以初始皆為 false。
+  // GN1410200E：每次切換字級都同步更新三顆按鈕的 aria-pressed（初始狀態見 HTML：中=true）。
   document.querySelectorAll('#lf-head button[data-lf-size]').forEach(function(btn) {
     btn.setAttribute('aria-pressed', String(Number(btn.getAttribute('data-lf-size')) === Number(size)));
   });
@@ -305,8 +278,7 @@ window.lfFullscreen = function() {
     win.style.zIndex = '999999';
     win.style.borderRadius = '16px';
     btn.textContent = '⊡';
-    btn.title = '縮小';
-    btn.setAttribute('aria-label', '縮小');
+    btn.title = '縮小'; btn.setAttribute('aria-label','縮小視窗');
     // 放大後改 4 欄，充分利用空間
     if (list) list.style.gridTemplateColumns = 'repeat(4, 1fr)';
   } else {
@@ -314,8 +286,7 @@ window.lfFullscreen = function() {
     win.style.bottom = ''; win.style.width = ''; win.style.height = '';
     win.style.zIndex = ''; win.style.borderRadius = '';
     btn.textContent = '⛶';
-    btn.title = '放大';
-    btn.setAttribute('aria-label', '放大');
+    btn.title = '放大'; btn.setAttribute('aria-label','放大視窗');
     // 恢復 2 欄
     if (list) list.style.gridTemplateColumns = '';
   }
@@ -360,18 +331,15 @@ window.lfZoomReset = () => {
 // widget 內部物品清單與目前 index
 var _lfItems = [];
 var _lfIdx   = 0;
-var _lfLbOpener = null;
 
 window.lfShowImg = (src, alt, idx) => {
   const lb  = document.getElementById('lf-lightbox');
   const img = document.getElementById('lf-lightbox-img');
   img.src = src; img.alt = alt || '';
   _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply();
-  if (!lb.classList.contains('open')) _lfLbOpener = document.activeElement;
+  window._lfLbOpener = document.activeElement;
   lb.classList.add('open');
-  // 照片檢視 dialog 開啟後焦點移到關閉鈕
-  var _cb = document.getElementById('lf-lb-close');
-  if (_cb) _cb.focus();
+  var lbc = document.getElementById('lf-lb-close'); if (lbc) lbc.focus();
   // 記錄目前 index
   if (typeof idx === 'number') _lfIdx = idx;
   // 更新計數提示
@@ -407,27 +375,14 @@ window.lfNavNext = function() { _lfNavTo(1);  };
 
 window.lfCloseLightbox = () => {
   document.getElementById('lf-lightbox').classList.remove('open');
+  if (window._lfLbOpener && window._lfLbOpener.focus) window._lfLbOpener.focus();
   // ✅ 不動 body.overflow，panel 保持開著
-  // 關閉後焦點回到開啟它的縮圖；縮圖若已因重新渲染消失，就回到面板的關閉鈕
-  var op = _lfLbOpener; _lfLbOpener = null;
-  if (op && document.body.contains(op) && op.focus) op.focus();
-  else { var hc = document.getElementById('lf-head-close'); if (hc) hc.focus(); }
 };
 
 // Keyboard: Esc 關 lightbox，左右鍵切換物品
 document.addEventListener('keydown', e => {
   var lb = document.getElementById('lf-lightbox');
   var lbOpen = lb && lb.classList.contains('open');
-  // 照片檢視 dialog 開著時，Tab 只在工具列按鈕間循環
-  if (e.key === 'Tab' && lbOpen) {
-    var fb = lb.querySelectorAll('button');
-    if (fb.length) {
-      var first = fb[0], last = fb[fb.length - 1];
-      if (e.shiftKey && (document.activeElement === first || !lb.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && (document.activeElement === last || !lb.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
-    }
-    return;
-  }
   if (e.key === 'Escape') {
     if (lbOpen) { lfCloseLightbox(); e.stopPropagation(); }
     // GN1210100E：lightbox 沒開、面板開著時，Esc 關面板並把焦點還給 FAB。
@@ -528,7 +483,7 @@ const initFirebase = async () => {
         console.warn('[失物招領元件]', err);
         setStatus(false, '連線失敗');
         document.getElementById('lf-list').innerHTML =
-          '<div id="lf-empty"><div id="lf-empty-icon" aria-hidden="true">⚠️</div>暫時無法載入</div>';
+          '<div id="lf-empty"><div id="lf-empty-icon">⚠️</div>暫時無法載入</div>';
       }
     );
   } catch(e) {
@@ -542,30 +497,27 @@ const initFirebase = async () => {
 function renderItems(items) {
   const el = document.getElementById('lf-list');
   if (!items.length) {
-    el.innerHTML = '<div id="lf-empty"><div id="lf-empty-icon" aria-hidden="true">🎉</div>目前沒有待領失物</div>';
+    el.innerHTML = '<div id="lf-empty"><div id="lf-empty-icon">🎉</div>目前沒有待領失物</div>';
     return;
   }
   // 記錄有圖片的物品清單，供左右切換用
   _lfItems = items.filter(i => i.imageBase64);
-  const placeholder = `<svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 48 48"><rect width="48" height="48" fill="#F0EAE2"/><path d="M10 32l9-12 6 8 4-5 7 9H10z" fill="#D4C8C0"/><circle cx="34" cy="16" r="5" fill="#D4C8C0"/></svg>`;
+  const placeholder = `<svg width="100%" height="100%" viewBox="0 0 48 48"><rect width="48" height="48" fill="#F0EAE2"/><path d="M10 32l9-12 6 8 4-5 7 9H10z" fill="#D4C8C0"/><circle cx="34" cy="16" r="5" fill="#D4C8C0"/></svg>`;
   el.innerHTML = items.map((item, i) => {
     const hasImg = !!item.imageBase64;
     const imgIdx = hasImg ? _lfItems.findIndex(x => x === item) : -1;
-    // 有照片：縮圖用 button（可用鍵盤開啟照片檢視），不再把 base64 塞進 onclick
     const thumb = hasImg
-      ? `<button type="button" class="lf-thumb" data-lf-idx="${imgIdx}" aria-label="放大檢視「${esc(item.name)}」照片"><img src="${item.imageBase64}" loading="lazy" alt=""/></button>`
-      : `<div class="lf-thumb" aria-hidden="true">${placeholder}</div>`;
+      ? `<button type="button" class="lf-thumb" aria-label="放大檢視${esc(item.name)}照片" onclick="event.stopPropagation();lfShowImg('${item.imageBase64.replace(/'/g,"\'")}','${esc(item.name)}',${imgIdx})"><img src="${item.imageBase64}" loading="lazy" alt=""/></button>`
+      : `<div class="lf-thumb">${placeholder}</div>`;
     const d = item.foundDate ? new Date(item.foundDate + 'T00:00:00') : null;
     const dateStr = d ? `${d.getMonth()+1}/${d.getDate()}` : '';
-    const url = window.lfConfig ? window.lfConfig.fullPageUrl : '';
-    // 名稱做成連結（鍵盤可聚焦、Enter 開啟完整頁面）；整列仍可用滑鼠點（由 #lf-list 的委派處理）
     return `<div class="lf-item">
       ${thumb}
       <div class="lf-info">
         <span class="lf-cat lf-cat-${esc(item.category)}">${esc(item.category)}</span>
-        <div class="lf-name"><a href="${url}" target="_blank" rel="noopener" title="${esc(item.name)}（另開新視窗）">${esc(item.name)}<span class="lf-sr">（另開新視窗）</span></a></div>
-        <div class="lf-meta"><span aria-hidden="true">📍</span><span class="lf-sr">地點：</span>${esc(item.foundLocation)}</div>
-        <div class="lf-meta"><span aria-hidden="true">📅</span><span class="lf-sr">日期：</span>${dateStr}</div>
+        <a class="lf-name" href="${window.lfConfig ? window.lfConfig.fullPageUrl : ''}" target="_blank" title="${esc(item.name)}（另開新視窗）">${esc(item.name)}（另開新視窗）</a>
+        <div class="lf-meta">📍${esc(item.foundLocation)}</div>
+        <div class="lf-meta">📅${dateStr}</div>
       </div>
     </div>`;
   }).join('');
@@ -592,21 +544,6 @@ function esc(s) {
 // ════════════════════════════════════════════
 // 6. 啟動
 // ════════════════════════════════════════════
-// 清單點擊委派：縮圖開照片檢視；其他地方（非連結）點整列開完整頁面
-document.getElementById('lf-list').addEventListener('click', function(e) {
-  var th = e.target.closest ? e.target.closest('.lf-thumb[data-lf-idx]') : null;
-  if (th) {
-    var idx  = Number(th.getAttribute('data-lf-idx'));
-    var item = _lfItems[idx];
-    if (item) lfShowImg(item.imageBase64, item.name, idx);
-    return;
-  }
-  if (e.target.closest && e.target.closest('a')) return; // 連結自己會開
-  if (e.target.closest && e.target.closest('.lf-item')) {
-    window.open(CONFIG.fullPageUrl, '_blank', 'noopener');
-  }
-});
-
 initFirebase();
 
 })(); // end IIFE
