@@ -1,5 +1,7 @@
 /*!
  * 失物招領 浮動元件 - 2026-10-31 對比修正版
+ * 2026-11-10 人工檢測修正（GN1410200E / GN1210100E）：字級按鈕 aria-pressed、FAB aria-expanded/aria-controls、
+ * 面板 role=dialog、開面板焦點移至關閉鈕、Esc 關面板並回焦點至 FAB。未改顏色、版面、Firebase。
  * 失物招領 浮動元件
  * 使用方式：在任何頁面 </body> 前加入
  * <script src="lostfound-widget.js"></script>
@@ -178,13 +180,13 @@ const root = document.createElement('div');
 root.id = 'lf-widget-root';
 root.innerHTML = `
   <span id="lf-dot-badge" style="position:fixed;bottom:calc(10% + 58px);left:calc(2.5% - 6px);width:12px;height:12px;background:#4ade80;border-radius:50%;border:2px solid #fff;z-index:99999;display:none;"></span>
-  <button id="lf-fab" title="失物招領">
+  <button id="lf-fab" title="失物招領" aria-expanded="false" aria-controls="lf-panel">
     <span id="lf-badge"></span>
     <span id="lf-fab-icon">🔍</span>
     <span id="lf-fab-text">失物招領</span>
   </button>
 
-  <div id="lf-panel">
+  <div id="lf-panel" role="dialog" aria-label="失物招領">
     <div id="lf-head">
       <div id="lf-head-av" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔍</div>
       <div style="flex:1;">
@@ -192,9 +194,9 @@ root.innerHTML = `
         <div style="font-size:11px;color:rgba(255,255,255,0.85);margin-top:1px;"><span style="color:#4ade80;">●</span> 即時同步</div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;margin-right:6px;">
-        <button onclick="lfSetSize(13)" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:11px;font-family:sans-serif;">小</button>
-        <button onclick="lfSetSize(15)" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;font-family:sans-serif;">中</button>
-        <button onclick="lfSetSize(17)" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;font-family:sans-serif;">大</button>
+        <button onclick="lfSetSize(13)" data-lf-size="13" aria-label="字級小" aria-pressed="false" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:11px;font-family:sans-serif;">小</button>
+        <button onclick="lfSetSize(15)" data-lf-size="15" aria-label="字級中" aria-pressed="true" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;font-family:sans-serif;">中</button>
+        <button onclick="lfSetSize(17)" data-lf-size="17" aria-label="字級大" aria-pressed="false" style="background:rgba(0,0,0,0.25);border:none;color:white;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;font-family:sans-serif;">大</button>
       </div>
       <button id="lf-fs-btn" onclick="lfFullscreen()" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="放大">⛶</button>
       <button id="lf-head-close" title="關閉" style="background:rgba(0,0,0,0.25);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
@@ -236,16 +238,25 @@ function open()  {
   isOpen = true;
   document.getElementById('lf-panel').classList.add('open');
   document.getElementById('lf-dot-badge').style.display = 'none';
+  document.getElementById('lf-fab').setAttribute('aria-expanded', 'true');
+  // GN1210100E：面板一開就把鍵盤焦點移到關閉鈕，鍵盤使用者不用再 Tab 一圈找關閉。
+  var closeBtn = document.getElementById('lf-head-close');
+  if (closeBtn) closeBtn.focus();
 }
 function close() {
   isOpen = false;
   document.getElementById('lf-panel').classList.remove('open');
+  document.getElementById('lf-fab').setAttribute('aria-expanded', 'false');
 }
 
 window.lfSetSize = function(size) {
   document.querySelectorAll('.lf-name,.lf-meta,.lf-cat').forEach(el => el.style.fontSize = size + 'px');
   document.getElementById('lf-notice').style.fontSize = size + 'px';
   window._lfSize = size;
+  // GN1410200E：每次切換字級都同步更新三顆按鈕的 aria-pressed（初始狀態見 HTML：中=true）。
+  document.querySelectorAll('#lf-head button[data-lf-size]').forEach(function(btn) {
+    btn.setAttribute('aria-pressed', String(Number(btn.getAttribute('data-lf-size')) === Number(size)));
+  });
 };
 
 var _lfFullscreen = false;
@@ -368,6 +379,13 @@ document.addEventListener('keydown', e => {
   var lbOpen = lb && lb.classList.contains('open');
   if (e.key === 'Escape') {
     if (lbOpen) { lfCloseLightbox(); e.stopPropagation(); }
+    // GN1210100E：lightbox 沒開、面板開著時，Esc 關面板並把焦點還給 FAB。
+    else if (isOpen) {
+      close();
+      var fab = document.getElementById('lf-fab');
+      if (fab) fab.focus();
+      e.stopPropagation();
+    }
   } else if (e.key === 'ArrowLeft' && lbOpen) {
     lfNavPrev();
   } else if (e.key === 'ArrowRight' && lbOpen) {
