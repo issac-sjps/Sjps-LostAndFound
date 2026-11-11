@@ -480,14 +480,12 @@ const initFirebase = async () => {
         setStatus(true, `已連線 · ${items.length} 件待認領`);
       },
       err => {
-        console.warn('[失物招領元件]', err);
         setStatus(false, '連線失敗');
         document.getElementById('lf-list').innerHTML =
           '<div id="lf-empty"><div id="lf-empty-icon">⚠️</div>暫時無法載入</div>';
       }
     );
   } catch(e) {
-    console.warn('[失物招領元件] Firebase 載入失敗', e);
   }
 };
 
