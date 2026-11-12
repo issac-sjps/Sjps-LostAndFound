@@ -21,7 +21,14 @@
  * 外觀修正（2026-11-12 使用者回報：按鈕圖案不好看，與 AI客服同一問題）：
  * - 可見內容只有圖示 +「失物招領」四個字，「（另開新視窗）」只放在 aria-label 裡
  *   （螢幕閱讀器會報讀，畫面上不顯示），不再擠在 68px 圓圈裡換行溢出。
- * - 按鈕加 overflow:hidden，任何內容都溢不出圓圈；文字 white-space:nowrap，絕不換行。
+ * - 2026-11-12 11:10 使用者再回報：字被圓圈底緣砍頭，比原本凸出去還難看。
+ *   原因就是字太長 + overflow:hidden 把它切掉。治本方法是「（另開新視窗）」
+ *   根本不要顯示（見下），不是把它改小。overflow:hidden 已拿掉，內容裝得下，
+ *   不會再有砍頭；就算以後字稍長，也只會凸出去，不會被切掉。
+ * - 「（另開新視窗）」可不可以不顯示？可以。2.4.9 / 3.2.5 接受「圖示＋無障礙名稱」
+ *   的形式：畫面只留圖示＋「失物招領」，aria-label 寫「失物招領（另開新視窗）」，
+ *   螢幕閱讀器照樣報讀，人工檢測第 8 項一樣過。想留可見小字也可以（約 8px），
+ *   但 68px 圓圈裡還是擠、難讀，不建議。
  *
  * 上傳方式（二選一）：
  * (a) 最省事：把這個檔案內容覆蓋掉 GitHub Pages 上的 lostfound-widget.js，
@@ -47,7 +54,7 @@
     style.textContent =
       '#lf-link-fab {' +
       ' position: fixed; bottom: 10%; left: 2.5%; z-index: 99999;' +
-      ' width: 68px; height: 68px; border-radius: 50%; overflow: hidden;' +
+      ' width: 68px; height: 68px; border-radius: 50%;' +
       ' background: #7c2d12; color: #fff; text-decoration: none;' +
       ' display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;' +
       ' box-shadow: 0 4px 16px rgba(124,45,18,.45); cursor: pointer;' +
