@@ -18,6 +18,11 @@
  * - 拿掉未讀件數紅色徽章（要 Firebase 才有數字）。想留徽章再跟我說。
  * - 主 CSS 的懸停黃底規則（a:hover）會讓按鈕懸停時變黃底黑字，與全站一致，是預期的。
  *
+ * 外觀修正（2026-11-12 使用者回報：按鈕圖案不好看，與 AI客服同一問題）：
+ * - 可見內容只有圖示 +「失物招領」四個字，「（另開新視窗）」只放在 aria-label 裡
+ *   （螢幕閱讀器會報讀，畫面上不顯示），不再擠在 68px 圓圈裡換行溢出。
+ * - 按鈕加 overflow:hidden，任何內容都溢不出圓圈；文字 white-space:nowrap，絕不換行。
+ *
  * 上傳方式（二選一）：
  * (a) 最省事：把這個檔案內容覆蓋掉 GitHub Pages 上的 lostfound-widget.js，
  *     檔名不變，學校站的 script 標籤不用改，清除快取後自動生效。
@@ -42,18 +47,19 @@
     style.textContent =
       '#lf-link-fab {' +
       ' position: fixed; bottom: 10%; left: 2.5%; z-index: 99999;' +
-      ' width: 68px; height: 68px; border-radius: 50%;' +
+      ' width: 68px; height: 68px; border-radius: 50%; overflow: hidden;' +
       ' background: #7c2d12; color: #fff; text-decoration: none;' +
       ' display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;' +
       ' box-shadow: 0 4px 16px rgba(124,45,18,.45); cursor: pointer;' +
       " font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;" +
       '}' +
       '#lf-link-fab:hover { background: #4a1a0b; }' +
-      '#lf-link-fab-icon { font-size: 26px; line-height: 1; }' +
-      '#lf-link-fab-text { font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; }';
+      '#lf-link-fab-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }' +
+      '#lf-link-fab-text { font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; line-height: 1; }';
     document.head.appendChild(style);
 
     // 建立連結鈕（原生 <a>，鍵盤可用）
+    // 可見內容只有圖示 +「失物招領」；「（另開新視窗）」只在 aria-label，不顯示。
     var a = document.createElement('a');
     a.id = 'lf-link-fab';
     a.href = PAGE_URL;
