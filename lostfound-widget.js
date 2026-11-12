@@ -25,6 +25,10 @@
  *   原因就是字太長 + overflow:hidden 把它切掉。治本方法是「（另開新視窗）」
  *   根本不要顯示（見下），不是把它改小。overflow:hidden 已拿掉，內容裝得下，
  *   不會再有砍頭；就算以後字稍長，也只會凸出去，不會被切掉。
+ *
+ * 白字對比（2026-11-12 使用者問：白字有過 7:1 嗎）：
+ * - 底色 #7c2d12，白字 = 9.37:1，過 AAA，底色不用改。
+ * - color 用 #fff !important，確保主 CSS 的 a { color } 蓋不掉白字。
  * - 「（另開新視窗）」可不可以不顯示？可以。2.4.9 / 3.2.5 接受「圖示＋無障礙名稱」
  *   的形式：畫面只留圖示＋「失物招領」，aria-label 寫「失物招領（另開新視窗）」，
  *   螢幕閱讀器照樣報讀，人工檢測第 8 項一樣過。想留可見小字也可以（約 8px），
@@ -55,7 +59,7 @@
       '#lf-link-fab {' +
       ' position: fixed; bottom: 10%; left: 2.5%; z-index: 99999;' +
       ' width: 68px; height: 68px; border-radius: 50%;' +
-      ' background: #7c2d12; color: #fff; text-decoration: none;' +
+      ' background: #7c2d12; color: #fff !important; text-decoration: none;' +
       ' display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;' +
       ' box-shadow: 0 4px 16px rgba(124,45,18,.45); cursor: pointer;' +
       " font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;" +
