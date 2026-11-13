@@ -1,5 +1,6 @@
 /*!
  * 失物招領 浮動按鈕（連結版）- 2026-11-12
+ * 2026-11-13 rem 版：字級 px 改 rem（圖示 26px→1.625rem、文字 11px→0.6875rem），Freego CS2140401C 只接受相對單位。外觀不變（根字級 16px 時等於原尺寸）。
  * 取代 lostfound-widget.js 的站內面板：點按鈕直接開新視窗到獨立頁面
  * https://issac-sjps.github.io/Sjps-LostAndFound/
  *
@@ -65,8 +66,8 @@
       " font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;" +
       '}' +
       '#lf-link-fab:hover { background: #4a1a0b; }' +
-      '#lf-link-fab-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }' +
-      '#lf-link-fab-text { font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; line-height: 1; }';
+      '#lf-link-fab-icon { font-size:1.625rem; line-height: 1; flex-shrink: 0; }' +
+      '#lf-link-fab-text { font-size:0.6875rem; font-weight: 600; letter-spacing: 1px; white-space: nowrap; line-height: 1; }';
     document.head.appendChild(style);
 
     // 建立連結鈕（原生 <a>，鍵盤可用）
